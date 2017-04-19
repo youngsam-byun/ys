@@ -16,6 +16,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Service;
 
+import javax.rmi.CORBA.Util;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import java.util.List;
 @Service
 public class ArticleServiceImpl implements ArticleService {
 
+    public static final String SHOULD_NOT_BE_NEGATIVE_VALUE = "Should not be negative value";
     @Value("${articleservice.write.nopermission}")
     private String NO_PERMISSION_TO_WRITE_ARTICLE;// = "No Permission to write article";
     @Value("${articleservice.update.nopermission}")
@@ -49,7 +51,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public boolean writeArticle(Article article, SecurityContext securityContext) {
-        if (UtilValidation.IsNull(article, securityContext))
+        if (UtilValidation.isNull(article, securityContext))
             throw new NullPointerException();
 
 
@@ -60,9 +62,12 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public ArticleDTO readArticle(Integer id) {
-        if (UtilValidation.IsNull(id))
+    public ArticleDTO readArticle(Integer id) throws InvalidArgumentException {
+        if (UtilValidation.isNull(id))
             throw new NullPointerException();
+
+        if(UtilValidation.isNegativeInt(id))
+            throw new InvalidArgumentException(new String[]{SHOULD_NOT_BE_NEGATIVE_VALUE});
 
         Article article = articleRepository.read(id);
         if (article == null)
@@ -81,7 +86,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public boolean updateArticle(Article article, SecurityContext securityContext) {
-        if (UtilValidation.IsNull(article, securityContext))
+        if (UtilValidation.isNull(article, securityContext))
             throw new NullPointerException();
 
         if (hasWritePermission(securityContext, Role.USER) == false)
@@ -94,9 +99,12 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean deleteArticle(Integer id, SecurityContext securityContext) {
-        if (UtilValidation.IsNull(id))
+    public boolean deleteArticle(Integer id, SecurityContext securityContext) throws InvalidArgumentException {
+        if (UtilValidation.isNull(id))
             throw new NullPointerException();
+
+        if(UtilValidation.isNegativeInt(id))
+            throw new InvalidArgumentException(new String[]{SHOULD_NOT_BE_NEGATIVE_VALUE});
 
         if (hasDeletePermission(securityContext, id) == false)
             throw new AccessDeniedException(NO_PERMISSION_TO_DELETE_ARTICLE);
@@ -106,9 +114,13 @@ public class ArticleServiceImpl implements ArticleService {
 
 
     @Override
-    public List<ArticleDTO> getList(Integer pageNo, Integer pageSize) {
-        if (UtilValidation.IsNull(pageNo, pageSize))
+    public List<ArticleDTO> getList(Integer pageNo, Integer pageSize) throws InvalidArgumentException {
+        if (UtilValidation.isNull(pageNo, pageSize))
             throw new NullPointerException();
+
+        if(UtilValidation.isNegativeInt(pageNo)) {
+            throw new InvalidArgumentException(new String[]{SHOULD_NOT_BE_NEGATIVE_VALUE});
+        }
 
         List<Article> articleList = articleRepository.getList(pageNo, pageSize);
 
@@ -118,8 +130,11 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<ArticleDTO> getListBySearch(Integer pageNo, Integer pageSize, String keyword) throws InvalidArgumentException {
-        if (UtilValidation.IsNull(pageNo, pageSize, keyword))
+        if (UtilValidation.isNull(pageNo, pageSize, keyword))
             throw new NullPointerException();
+
+        if(UtilValidation.isNegativeInt(pageNo))
+            throw new InvalidArgumentException(new String[]{SHOULD_NOT_BE_NEGATIVE_VALUE});
 
         if (keyword.isEmpty())
             throw new InvalidArgumentException(new String[]{SEARCH_KEYWORD_SHOULD_NOT_BE_EMPTY});
@@ -133,9 +148,12 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public UtilPagination getPagination(Integer pageNo, Integer pageSize) {
-        if (UtilValidation.IsNull(pageNo))
+    public UtilPagination getPagination(Integer pageNo, Integer pageSize) throws InvalidArgumentException {
+        if (UtilValidation.isNull(pageNo))
             throw new NullPointerException();
+
+        if(UtilValidation.isNegativeInt(pageNo))
+            throw new InvalidArgumentException(new String[]{SHOULD_NOT_BE_NEGATIVE_VALUE});
 
         int total = articleRepository.getTotal();
         return new UtilPagination(pageNo, total, pageSize);
@@ -143,8 +161,11 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public UtilPagination getPaginationBySearch(Integer pageNo, Integer pageSize, String keyword) throws InvalidArgumentException {
-        if (UtilValidation.IsNull(pageNo, keyword))
+        if (UtilValidation.isNull(pageNo, keyword))
             throw new NullPointerException();
+
+        if(UtilValidation.isNegativeInt(pageNo))
+            throw new InvalidArgumentException(new String[]{SHOULD_NOT_BE_NEGATIVE_VALUE});
 
         if (keyword.isEmpty())
             throw new InvalidArgumentException(new String[]{SEARCH_KEYWORD_SHOULD_NOT_BE_EMPTY});

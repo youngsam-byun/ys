@@ -5,11 +5,19 @@ package com.ys.app.util;
  */
 public class UtilValidation {
 
-    public static boolean IsNull(Object... objects) {
+    public static boolean isNull(Object... objects) {
         for (Object o : objects) {
             if (o == null)
                 return true;
         }
         return false;
+    }
+
+    public  static  boolean isPositiveInt(Integer i){
+        return i>0;
+    }
+
+    public  static  boolean isNegativeInt(Integer i){
+        return i<0;
     }
 }

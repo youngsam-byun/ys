@@ -14,12 +14,12 @@ import java.util.List;
 public interface ArticleService {
 
     boolean  writeArticle(Article article, SecurityContext securityContext);
-    ArticleDTO readArticle(Integer id);
+    ArticleDTO readArticle(Integer id) throws InvalidArgumentException ;
     boolean  updateArticle(Article article,SecurityContext securityContext);
-    boolean  deleteArticle(Integer id,SecurityContext securityContext);
-    List<ArticleDTO> getList(Integer pageNo,Integer pageSize);
+    boolean  deleteArticle(Integer id,SecurityContext securityContext) throws InvalidArgumentException;
+    List<ArticleDTO> getList(Integer pageNo,Integer pageSize) throws InvalidArgumentException;
     List<ArticleDTO> getListBySearch(Integer pageNo,Integer pageSize,String keyword) throws InvalidArgumentException;
-    UtilPagination getPagination(Integer pageNo,Integer pageSize);
+    UtilPagination getPagination(Integer pageNo,Integer pageSize) throws InvalidArgumentException;
     UtilPagination getPaginationBySearch(Integer pageNo,Integer pageSize,String keyword) throws InvalidArgumentException;
 
 }

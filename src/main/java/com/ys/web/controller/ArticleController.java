@@ -1,17 +1,25 @@
 package com.ys.web.controller;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import com.ys.app.exception.CustomException;
+import com.ys.app.model.Article;
 import com.ys.app.model.dto.ArticleDTO;
 import com.ys.app.service.ArticleService;
 import com.ys.app.util.UtilPagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.method.P;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -27,10 +35,15 @@ public class ArticleController {
     private static final String FOLDER="/article";
     private static final String LIST_JSP = "/list.jsp";
     private static final String READ_JSP = "/read.jsp";
+    private static final String WRITE_JSP = "/write.jsp";
+
     private static final String PAGINATION = "pagination";
     private static final String ARTICLE_DTO_LIST = "articleDTOList";
     private static final String ARTICLE_DTO = "articleDTO";
     private static final String READ = "read";
+    private static final String WRITE = "write";
+    private static final String DELETE = "delete";
+
 
     @Value("${articlecontroller.read.empty}")
     private final String ARTICLECONTROLLER_READ_EMPTY = "articlecontroller.read.empty";
@@ -38,7 +51,8 @@ public class ArticleController {
     @Value("${articlecontroller.delete.fail}")
     private final String  ARTICLECONTROLLER_DELETE_FAIL= "articlecontroller.delete.fail";
 
-
+    @Value("${articlecontroller.write.fail}")
+    private final String ARTICLECONTROLLER_WRITE_FAIL ="articlecontroller.write.fail" ;
 
     @Value("${page.size?:10}")
     private Integer pageSize=10;
@@ -51,8 +65,8 @@ public class ArticleController {
     }
 
 
-    @RequestMapping(method=GET,value={"/list","/list/{pageNo}"})
-    public ModelAndView home(ModelAndView modelAndview, @PathVariable(value = "pageNo",required = false) Integer pageNo){
+    @GetMapping(value={"/list","/list/{pageNo}"})
+    public ModelAndView home(ModelAndView modelAndview, @PathVariable(value = "pageNo",required = false) Integer pageNo) throws InvalidArgumentException {
         if(pageNo==null)
             pageNo=1;
 
@@ -65,8 +79,36 @@ public class ArticleController {
         return modelAndview;
     }
 
-    @RequestMapping(method=GET,value = {"/read/{id}"})
-    public ModelAndView read(ModelAndView modelAndview, @PathVariable(value = "id") Integer id){
+
+    @GetMapping(value = {"/write"})
+    @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
+    public ModelAndView get_write(Article article,ModelAndView modelAndView){
+        modelAndView.addObject("article",article);
+        modelAndView.setViewName(FOLDER+ WRITE_JSP);
+        return modelAndView;
+
+    }
+
+    @PostMapping(value = {"/write"})
+    @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
+    public ModelAndView write(@Valid Article article,BindingResult bindingResult, ModelAndView modelAndView) {
+
+        if(bindingResult.hasErrors()) {
+            modelAndView.setViewName(FOLDER+WRITE_JSP);
+            return modelAndView;
+        }
+
+        Boolean b=articleService.writeArticle(article,SecurityContextHolder.getContext());
+        if(b) {
+            modelAndView.setViewName(FOLDER+LIST_JSP);
+            return  modelAndView;
+        }else
+            throw new CustomException(this.getClass(), WRITE, ARTICLECONTROLLER_WRITE_FAIL,new Throwable());
+    }
+
+
+    @GetMapping(value = {"/read/{id}"})
+    public ModelAndView read(ModelAndView modelAndview, @PathVariable(value = "id") Integer id) throws InvalidArgumentException {
 
         ArticleDTO articleDTO=articleService.readArticle(id);
 
@@ -79,8 +121,9 @@ public class ArticleController {
     }
 
 
-    @RequestMapping(method=POST,value = {"/delete/{id}"})
-    public ModelAndView delete(ModelAndView modelAndview, @PathVariable(value = "id") Integer id){
+    @PostMapping( value = {"/delete/{id}"})
+    @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
+    public ModelAndView delete(ModelAndView modelAndview, @PathVariable(value = "id") Integer id) throws InvalidArgumentException {
 
         Boolean b=articleService.deleteArticle(id, SecurityContextHolder.getContext());
 
@@ -88,7 +131,9 @@ public class ArticleController {
             modelAndview.setViewName(FOLDER + LIST_JSP);
             return modelAndview;
         }else
-            throw new CustomException(this.getClass(), READ, ARTICLECONTROLLER_DELETE_FAIL,new Throwable());
+            throw new CustomException(this.getClass(), DELETE, ARTICLECONTROLLER_DELETE_FAIL,new Throwable());
     }
+
+
 
 }

@@ -18,7 +18,6 @@ public class Article {
     private String body;
 
     private int userId;
-
     private Date createTime;
     private Date updateTime;
     private int noOfRead;

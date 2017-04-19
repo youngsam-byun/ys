@@ -71,7 +71,7 @@ public class ArticleServiceImplTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public  void C_readArticle_shouldThrowNullopinterException(){
+    public  void C_readArticle_shouldThrowNullopinterException() throws InvalidArgumentException {
         articleService.readArticle(null);
     }
 
@@ -101,13 +101,13 @@ public class ArticleServiceImplTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void G_deleteArticle_shouldThrowNullPointerException() {
+    public void G_deleteArticle_shouldThrowNullPointerException() throws InvalidArgumentException {
 
         articleService.deleteArticle(null,null);
     }
 
     @Test(expected = NullPointerException.class)
-    public void I_getList_shouldThrowNullPointerException() {
+    public void I_getList_shouldThrowNullPointerException() throws InvalidArgumentException {
 
         articleService.getList(null,null);
 
@@ -172,7 +172,7 @@ public class ArticleServiceImplTest {
         }
 
         @Test
-        public  void B_readArticle_shouldReturnArticle(){
+        public  void B_readArticle_shouldReturnArticle() throws InvalidArgumentException {
             ArticleDTO articleDTO= articleService.readArticle(1);
             Article actual=articleDTO.getArticle();
             assertThat(actual).isEqualTo(mockedArticle);
@@ -186,7 +186,7 @@ public class ArticleServiceImplTest {
         }
 
         @Test
-        public  void D_deleteArticle_shouldReturnTrue(){
+        public  void D_deleteArticle_shouldReturnTrue() throws InvalidArgumentException {
             SecurityContext securityContext= returnSecurityContext(1);
             boolean b= articleService.deleteArticle(1,securityContext);
             assertThat(b).isTrue();
@@ -194,7 +194,7 @@ public class ArticleServiceImplTest {
         }
 
         @Test
-        public  void E_getListArticle_shouldReturnListArray(){
+        public  void E_getListArticle_shouldReturnListArray() throws InvalidArgumentException {
             List<ArticleDTO> articleDTOList= articleService.getList(1,15);
             assertThat(articleDTOList).isEqualTo(mockedArticleList) ;
 

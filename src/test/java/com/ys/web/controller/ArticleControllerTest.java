@@ -17,6 +17,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Date;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -45,7 +47,6 @@ public class ArticleControllerTest {
         MockitoAnnotations.initMocks(this);
         mockMVC= MockMvcBuilders.standaloneSetup(articleController).build();
     }
-
 
     @Test
     public  void A_homePageTestShouldThorw404Exception() throws Exception {
@@ -93,11 +94,35 @@ public class ArticleControllerTest {
 
     @Test
     public  void F_deleteArticleShouldReturn404() throws Exception {
-        mockMVC.perform(post("/article/delete/")).andExpect(status().isNotFound());
+        mockMVC.perform(post("/article/delete")).andExpect(status().isNotFound());
     }
-//
-//    @Test
-//    public  void G_deleteArticleShouldThorwNullPointerException() throws Exception {
-//        mockMVC.perform(post("/article/delete/12"));
-//    }
+
+    @Test
+    public  void G_deleteArticleShouldThorwNullPointerException() throws Exception {
+        try {
+            mockMVC.perform(post("/article/delete/"));
+        } catch (Exception e) {
+            assertThat(e).hasCauseInstanceOf(CustomException.class);
+        }
+    }
+
+    @Test
+    public  void H_writeReturnWriteJspPage() throws  Exception{
+
+        mockMVC.perform(get("/article/write")).andExpect(view().name("/article/write.jsp"));
+    }
+
+    @Test
+    public void I_writeArticleReturnTitleValidationFails() throws Exception{
+
+        mockMVC.perform(post("/article/write").param("categoryId","1")
+        .param("no","100").param("level","0").param("sequence","0").param("title","")
+                .param("body","body").param("userId","1").param("createTime","2017-04-19 17:30:00")
+                        .param("updateTime","2017-04-19 17:30:00").param("noOfRead","0")
+                .param("deleted","false")
+        ).andExpect(view().name("/article/write"));
+
+    }
+
+
 }
