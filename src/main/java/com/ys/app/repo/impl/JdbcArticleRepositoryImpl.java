@@ -13,6 +13,7 @@ import java.util.List;
 /**
  * Created by byun.ys on 4/11/2017.
  */
+@SuppressWarnings("unchecked")
 @Repository
 public class JdbcArticleRepositoryImpl extends BaseRepository<Article> implements ArticleRepository {
 
@@ -27,7 +28,7 @@ public class JdbcArticleRepositoryImpl extends BaseRepository<Article> implement
     private static final String KEYWORD = "keyword";
     private static final String GET_TOTAL = "getTotal";
     private static final String GET_TOTAL_BY_SEARCH = "getTotalBySearch";
-    public static final String ID = "id";
+    private static final String ID = "id";
 
 
     @Autowired
@@ -44,7 +45,7 @@ public class JdbcArticleRepositoryImpl extends BaseRepository<Article> implement
 
     @Override
     public Article read(int id) {
-        return super.readByStoredProcedure("Article_READ",new SimpleEntry<String, Object>(ID,id));
+        return super.readByStoredProcedure("Article_READ", new SimpleEntry<>(ID, id));
     }
 
     @Override
@@ -54,7 +55,7 @@ public class JdbcArticleRepositoryImpl extends BaseRepository<Article> implement
 
     @Override
     public int delete(int id) {
-        return super.deleteById(id);
+        return super.deleteByUpdateId(id);
     }
 
     @Override

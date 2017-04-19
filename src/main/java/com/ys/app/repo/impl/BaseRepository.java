@@ -16,6 +16,7 @@ import java.util.Map;
 /**
  * Created by byun.ys on 4/11/2017.
  */
+@SuppressWarnings(value = {"unchecked","WeakerAccess"})
 public abstract class BaseRepository<T> {
     private static final String T = "T";
     private static final int INDEX = 0;
@@ -23,7 +24,8 @@ public abstract class BaseRepository<T> {
     private static final String COLUMN_NAME = "columnName";
     private static final String ID = "id";
     private static final String KEYWORD = "keyword";
-    public static final String GET_LIST_ALL = "getListAll";
+    private static final String GET_LIST_ALL = "getListAll";
+
     protected String table;
     protected DataSource dataSource;
     protected BaseRowMapper<T> baseRowMapper;
@@ -43,7 +45,8 @@ public abstract class BaseRepository<T> {
         Map<String, Object> hashMap;
         String storedProcedure = "readById";
         try {
-            SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<String, Object>("id", id));
+
+            SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>("id", id));
             return execute(storedProcedure, sqlParameterSource);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
@@ -51,11 +54,11 @@ public abstract class BaseRepository<T> {
         }
     }
 
-    protected final T readbyColumn(String columnName, String value) {
+    protected final T readByColumn(String columnName, String value) {
         Map<String, Object> hashMap;
         String storedProcedure = "readByColumn";
         try {
-            SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<String, Object>(COLUMN_NAME, columnName), new SimpleEntry<String, Object>("value", value));
+            SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>(COLUMN_NAME, columnName), new SimpleEntry<>("value", value));
             return execute(storedProcedure, sqlParameterSource);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
@@ -75,13 +78,19 @@ public abstract class BaseRepository<T> {
 
     protected final int deleteById(int id) {
         String storedProcedure = "deleteById";
-        SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<String, Object>(ID, id));
+        SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>(ID, id));
+        return executeObject(storedProcedure, sqlParameterSource);
+    }
+
+    protected final int deleteByUpdateId(int id) {
+        String storedProcedure = "deleteByUpdateId";
+        SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>(ID, id));
         return executeObject(storedProcedure, sqlParameterSource);
     }
 
     protected final int deleteBySearch(String keyword) {
         String storedProcedure = "deleteByKeyWord";
-        SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<String, Object>(KEYWORD, keyword));
+        SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>(KEYWORD, keyword));
         return executeObject(storedProcedure, sqlParameterSource);
     }
 

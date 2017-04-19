@@ -17,11 +17,11 @@ public class Article {
     @NotEmpty
     private String body;
 
-    private int userid;
+    private int userId;
 
     private Date createTime;
     private Date updateTime;
-    private int noofread;
+    private int noOfRead;
     private boolean deleted;
 
     public int getId() {
@@ -80,12 +80,12 @@ public class Article {
         this.body = body;
     }
 
-    public int getUserid() {
-        return userid;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUserid(int userid) {
-        this.userid = userid;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public Date getCreateTime() {
@@ -104,12 +104,12 @@ public class Article {
         this.updateTime = updateTime;
     }
 
-    public int getNoofread() {
-        return noofread;
+    public int getNoOfRead() {
+        return noOfRead;
     }
 
-    public void setNoofread(int noofread) {
-        this.noofread = noofread;
+    public void setNoOfRead(int noOfRead) {
+        this.noOfRead = noOfRead;
     }
 
     public boolean isDeleted() {

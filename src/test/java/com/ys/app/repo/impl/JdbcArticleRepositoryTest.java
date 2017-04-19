@@ -50,7 +50,7 @@ public class JdbcArticleRepositoryTest {
         a.setBody("hahaha");
         a.setCreateTime(new Date());
         a.setUpdateTime(new Date());
-        a.setUserid(0);
+        a.setUserId(0);
         a.setDeleted(false);
     }
 
@@ -97,7 +97,7 @@ public class JdbcArticleRepositoryTest {
     @Test
     public  void F_getTotalShouldReturnSizeOfOne(){
         int total=articleRepository.getTotal();
-        assertThat(total).isGreaterThan(10);
+        assertThat(total).isGreaterThanOrEqualTo(10);
     }
 
     @Test

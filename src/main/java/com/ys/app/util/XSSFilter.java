@@ -9,6 +9,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+@SuppressWarnings("PointlessBooleanExpression")
 public class XSSFilter implements Filter {
 
 	private static final String TNC_PATH = "/tnc";

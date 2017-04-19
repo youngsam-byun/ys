@@ -13,6 +13,7 @@ import java.util.List;
 /**
  * Created by byun.ys on 4/17/2017.
  */
+@SuppressWarnings("unchecked")
 @Repository
 public class JdbcUserRepositoryImpl extends BaseRepository<User> implements UserRepository {
 
@@ -56,12 +57,12 @@ public class JdbcUserRepositoryImpl extends BaseRepository<User> implements User
 
     @Override
     public List<User> getList(int pageNo, int pageSize) {
-        return super.getList(GET_LIST, new SimpleEntry<String, Object>(PAGE_NO, pageNo), new SimpleEntry<String, Object>(PAGE_SIZE, pageSize));
+        return super.getList(GET_LIST, new SimpleEntry<>(PAGE_NO, pageNo), new SimpleEntry<>(PAGE_SIZE, pageSize));
     }
 
     @Override
     public List<User> getListBySearch(int pageNo, int pageSize, String keyword) {
-        return super.getList("getListBySearch", new SimpleEntry<String, Object>(PAGE_NO, pageNo), new SimpleEntry<String, Object>(PAGE_SIZE, pageSize), new SimpleEntry<String, Object>(KEYWORD, keyword));
+        return super.getList("getListBySearch", new SimpleEntry<>(PAGE_NO, pageNo), new SimpleEntry<>(PAGE_SIZE, pageSize), new SimpleEntry<>(KEYWORD, keyword));
 
     }
 

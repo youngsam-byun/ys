@@ -15,8 +15,8 @@ public class CategoryRowMapper extends BaseRowMapper<Category> {
     private static final String ID = "id";
     private static final String NAME = "name";
     private static final String DELETED = "deleted";
-    public static final String CREATE_TIME = "createTime";
-    public static final String UPDATE_TIME = "updateTime";
+    private static final String CREATE_TIME = "createTime";
+    private static final String UPDATE_TIME = "updateTime";
 
     @Override
     public Category mapRow(ResultSet rs, int rowNum) throws SQLException {

@@ -11,7 +11,7 @@ import java.sql.SQLException;
  */
 public class ArticleRowMapper extends BaseRowMapper<Article> {
 
-    public static final String CATEGORY_ID = "categoryId";
+    private static final String CATEGORY_ID = "categoryId";
     private static final String ID = "id";
     private static final String NO = "no";
     private static final String LEVEL = "level";
@@ -38,7 +38,7 @@ public class ArticleRowMapper extends BaseRowMapper<Article> {
         article.setBody(rs.getString(BODY));
         article.setCreateTime(rs.getTimestamp(CREATE_TIME));
         article.setUpdateTime(rs.getTimestamp(UPDATE_TIME));
-        article.setUserid(rs.getInt(USER_ID));
+        article.setUserId(rs.getInt(USER_ID));
         article.setDeleted(rs.getBoolean(DELETED));
 
         return article;
@@ -57,8 +57,8 @@ public class ArticleRowMapper extends BaseRowMapper<Article> {
                 .addValue(BODY, article.getBody())
                 .addValue(CREATE_TIME, article.getCreateTime())
                 .addValue(UPDATE_TIME, article.getUpdateTime())
-                .addValue(USER_ID, article.getUserid())
-                .addValue(NO_OF_READ, article.getNoofread())
+                .addValue(USER_ID, article.getUserId())
+                .addValue(NO_OF_READ, article.getNoOfRead())
                 .addValue(DELETED, article.isDeleted());
 
     }
@@ -75,8 +75,8 @@ public class ArticleRowMapper extends BaseRowMapper<Article> {
                 .addValue(BODY, article.getBody())
                 .addValue(CREATE_TIME, article.getCreateTime())
                 .addValue(UPDATE_TIME, article.getUpdateTime())
-                .addValue(USER_ID, article.getUserid())
-                .addValue(NO_OF_READ, article.getNoofread())
+                .addValue(USER_ID, article.getUserId())
+                .addValue(NO_OF_READ, article.getNoOfRead())
                 .addValue(DELETED, article.isDeleted());
     }
 }

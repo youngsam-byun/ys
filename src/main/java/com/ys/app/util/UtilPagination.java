@@ -1,5 +1,7 @@
 package com.ys.app.util;
 
+
+
 public class UtilPagination {
 
 	private int begin;
@@ -9,6 +11,7 @@ public class UtilPagination {
 	private int maxDisplayedPages = 5;
 
 	public UtilPagination(int currentPage, int totalListCount, int pageSize) {
+
 
 		lastPage = (int) Math.ceil(totalListCount / (double) pageSize);
 		firstPage = 1;

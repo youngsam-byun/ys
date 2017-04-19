@@ -14,6 +14,7 @@ import java.util.List;
 /**
  * Created by byun.ys on 4/13/2017.
  */
+@SuppressWarnings("unchecked")
 @Repository
 public class JdbcCategoryRepositoryImpl extends BaseRepository<Category> implements CategoryRepository {
 
@@ -55,20 +56,20 @@ public class JdbcCategoryRepositoryImpl extends BaseRepository<Category> impleme
 
     @Override
     public int delete(int id) {
-        return super.deleteById(id);
+        return super.deleteByUpdateId(id);
 
     }
 
     @Override
     public List<Category> getList(int pageNo, int pageSize) {
-        return super.getList(GET_LIST, new SimpleEntry<String, Object>(PAGE_NO, pageNo), new SimpleEntry<String, Object>(PAGE_SIZE, pageSize));
+        return super.getList(GET_LIST, new SimpleEntry<>(PAGE_NO, pageNo), new SimpleEntry<>(PAGE_SIZE, pageSize));
     }
 
     @Override
     public List<Category> getListBySearch(int pageNo, int pageSize, String keyword) {
-        return super.getList(LIST_BY_SEARCH, new SimpleEntry<String, Object>(PAGE_NO, pageNo),
-                new SimpleEntry<String, Object>(PAGE_SIZE, pageSize),
-                new SimpleEntry<String, Object>(KEYWORD, keyword)
+        return super.getList(LIST_BY_SEARCH, new SimpleEntry<>(PAGE_NO, pageNo),
+                new SimpleEntry<>(PAGE_SIZE, pageSize),
+                new SimpleEntry<>(KEYWORD, keyword)
         );
     }
 
