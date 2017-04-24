@@ -6,6 +6,7 @@ import com.ys.app.model.Article;
 import com.ys.app.model.dto.ArticleDTO;
 import com.ys.app.service.ArticleService;
 import com.ys.app.util.UtilPagination;
+import com.ys.app.util.UtilValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.method.P;
@@ -13,10 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -43,16 +41,26 @@ public class ArticleController {
     private static final String READ = "read";
     private static final String WRITE = "write";
     private static final String DELETE = "delete";
+    private static final String LIST = "list";
 
 
-    @Value("${articlecontroller.read.empty}")
-    private final String ARTICLECONTROLLER_READ_EMPTY = "articlecontroller.read.empty";
+    @Value("${articleController.read.empty}")
+    private final String ARTICLECONTROLLER_READ_EMPTY = "articleController.read.empty";
 
-    @Value("${articlecontroller.delete.fail}")
-    private final String  ARTICLECONTROLLER_DELETE_FAIL= "articlecontroller.delete.fail";
+    @Value("${articleController.delete.fail}")
+    private final String  ARTICLECONTROLLER_DELETE_FAIL= "articleController.delete.fail";
 
-    @Value("${articlecontroller.write.fail}")
-    private final String ARTICLECONTROLLER_WRITE_FAIL ="articlecontroller.write.fail" ;
+    @Value("${articleController.write.fail}")
+    private final String ARTICLECONTROLLER_WRITE_FAIL ="articleController.write.fail" ;
+
+    @Value("${articleController.id.notnegative}")
+    private static final String ID_SHOULD_NOT_BE_NEGATIVE_VALUE = "articleController.id.notNegative";
+    @Value("${articleController.pageNo.notNegative}")
+    private static final String PAGENO_SHOULD_NOT_BE_NEGATIVE_VALUE = "articleController.pageNo.notNegative";
+
+    @Value("${articleController.keyword.notEmpty}")
+    private String SEARCH_KEYWORD_SHOULD_NOT_BE_EMPTY="articleController.keyword.notEmpty";
+
 
     @Value("${page.size?:10}")
     private Integer pageSize=10;
@@ -66,9 +74,12 @@ public class ArticleController {
 
 
     @GetMapping(value={"/list","/list/{pageNo}"})
-    public ModelAndView home(ModelAndView modelAndview, @PathVariable(value = "pageNo",required = false) Integer pageNo) throws InvalidArgumentException {
+    public ModelAndView home(ModelAndView modelAndview, @PathVariable(value = "pageNo",required = false) Integer pageNo) {
         if(pageNo==null)
             pageNo=1;
+
+        if(UtilValidation.isNegativeInt(pageNo))
+            throw new CustomException(this.getClass(), LIST,PAGENO_SHOULD_NOT_BE_NEGATIVE_VALUE);
 
         List<ArticleDTO> articleDTOList = articleService.getList(pageNo,pageSize);
         UtilPagination utilPagination=articleService.getPagination(pageNo,pageSize);
@@ -91,7 +102,7 @@ public class ArticleController {
 
     @PostMapping(value = {"/write"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    public ModelAndView write(@Valid Article article,BindingResult bindingResult, ModelAndView modelAndView) {
+    public ModelAndView write(@ModelAttribute("article") @Valid Article article, BindingResult bindingResult, ModelAndView modelAndView) {
 
         if(bindingResult.hasErrors()) {
             modelAndView.setViewName(FOLDER+WRITE_JSP);
@@ -103,17 +114,20 @@ public class ArticleController {
             modelAndView.setViewName(FOLDER+LIST_JSP);
             return  modelAndView;
         }else
-            throw new CustomException(this.getClass(), WRITE, ARTICLECONTROLLER_WRITE_FAIL,new Throwable());
+            throw new CustomException(this.getClass(), WRITE, ARTICLECONTROLLER_WRITE_FAIL);
     }
 
 
     @GetMapping(value = {"/read/{id}"})
-    public ModelAndView read(ModelAndView modelAndview, @PathVariable(value = "id") Integer id) throws InvalidArgumentException {
+    public ModelAndView read(ModelAndView modelAndview, @PathVariable(value = "id") Integer id) {
+
+        if(UtilValidation.isNegativeInt(id))
+            throw new CustomException(this.getClass(),READ,ID_SHOULD_NOT_BE_NEGATIVE_VALUE);
 
         ArticleDTO articleDTO=articleService.readArticle(id);
 
         if(articleDTO==null)
-            throw new CustomException(this.getClass(), READ, ARTICLECONTROLLER_READ_EMPTY,new Throwable());
+            throw new CustomException(this.getClass(), READ, ARTICLECONTROLLER_READ_EMPTY);
 
         modelAndview.addObject(ARTICLE_DTO,articleDTO);
         modelAndview.setViewName(FOLDER+ READ_JSP);
@@ -123,7 +137,10 @@ public class ArticleController {
 
     @PostMapping( value = {"/delete/{id}"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    public ModelAndView delete(ModelAndView modelAndview, @PathVariable(value = "id") Integer id) throws InvalidArgumentException {
+    public ModelAndView delete(ModelAndView modelAndview, @PathVariable(value = "id") Integer id) {
+
+        if(UtilValidation.isNegativeInt(id))
+            throw new CustomException(this.getClass(),DELETE,ID_SHOULD_NOT_BE_NEGATIVE_VALUE);
 
         Boolean b=articleService.deleteArticle(id, SecurityContextHolder.getContext());
 
@@ -131,7 +148,7 @@ public class ArticleController {
             modelAndview.setViewName(FOLDER + LIST_JSP);
             return modelAndview;
         }else
-            throw new CustomException(this.getClass(), DELETE, ARTICLECONTROLLER_DELETE_FAIL,new Throwable());
+            throw new CustomException(this.getClass(), DELETE, ARTICLECONTROLLER_DELETE_FAIL);
     }
 
 

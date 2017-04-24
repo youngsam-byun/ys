@@ -1,5 +1,6 @@
 package com.ys.app.model;
 
+import javax.validation.constraints.Min;
 import java.util.Date;
 
 public class User {
@@ -14,6 +15,8 @@ public class User {
     private String secret;
     private String refreshtoken;
     private Long expiretime;
+
+    @Min(0)
     private int id;
     private String email;
     private String username;
@@ -24,6 +27,9 @@ public class User {
     private boolean notlocked;
     private Date createTime;
     private Date updateTime;
+
+    private int trial;
+
 
     public String getProviderid() {
         return providerid;
@@ -191,5 +197,13 @@ public class User {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public int getTrial() {
+        return trial;
+    }
+
+    public void setTrial(int trial) {
+        this.trial = trial;
     }
 }

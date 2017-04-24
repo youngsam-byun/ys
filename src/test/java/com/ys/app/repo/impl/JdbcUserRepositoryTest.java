@@ -3,7 +3,6 @@ package com.ys.app.repo.impl;
 
 import com.ys.app.model.User;
 import com.ys.app.repo.UserRepository;
-import config.AppConfig_DEV;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -26,11 +25,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 
 
-@WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AppConfig_DEV.class})
-@ActiveProfiles("dev")
+@ContextConfiguration(classes = {AppConfig_REPO_TEST.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@WebAppConfiguration
+@ActiveProfiles("dev")
 public class JdbcUserRepositoryTest {
 
     @Autowired
@@ -53,6 +52,7 @@ public class JdbcUserRepositoryTest {
         user.setSecret("secret randomString");
         user.getRefreshtoken();
         user.setExpiretime(10000L);
+        user.setEmail("hah@email.com");
         user.setUsername("ys username");
         user.setPassword("ys password");
         user.setRoleid(1);
@@ -66,7 +66,7 @@ public class JdbcUserRepositoryTest {
 
 
     @Test
-    public void A_insertDataReturnId(){
+    public void A_create_returnDataReturnId(){
         for(int i=0;i<10;i++) {
             returnId = userRepository.create(user);
         }
@@ -75,15 +75,21 @@ public class JdbcUserRepositoryTest {
 
 
     @Test
-    public void B_readByIdShouldEqualToReturnId(){
+    public void B_readById_EqualToReturnId(){
        User u=userRepository.read(returnId);
         assertThat(u.getId()).isEqualTo(returnId);
     }
 
+    @Test
+    public void B_readByEmail_EqualToReturnId(){
+        User u=userRepository.readByEmail("hah@email.com");
+        assertThat(u.getEmail()).isEqualTo("hah@email.com");
+
+    }
 
     @Test
     @Transactional
-    public void C_updateUsernameShouldReturnOneRow(){
+    public void C_update_Return1(){
         User u=new User();
         u.setId(returnId);
         u.setUsername("hahaha");
@@ -93,20 +99,40 @@ public class JdbcUserRepositoryTest {
 
     @Test
     @Transactional
-    public void D_deleteByIdShouldEqualToOne(){
+    public void C_updatePassword_Return1(){
+        User u=new User();
+        u.setId(1);
+        u.setPassword("hahaha");
+        int returnNumber=userRepository.updatePassword(u);
+        assertThat(returnNumber).isEqualTo(1);
+    }
+
+    @Test
+    @Transactional
+    public void C_updateTrialCountByOne_Return1(){
+        User u=new User();
+        u.setId(1);
+        u.setEmail("hah@email.com");
+        int returnNumber=userRepository.updateTrialCountByOne(u.getEmail(),new Date());
+        assertThat(returnNumber).isGreaterThanOrEqualTo(1);
+    }
+
+    @Test
+    @Transactional
+    public void D_deleteById_equalToOne(){
         int r=userRepository.delete(returnId);
         assertThat(r).isEqualTo(1);
     }
 //
     @Test
-    public  void E_getListShouldContainsOriginalObject(){
+    public  void E_getList_containsOriginalObject(){
         List<User> ul=userRepository.getList(1,10);
         assertThat(ul.size()).isEqualTo(10);
         assertThat(ul.get(0).getUsername()).contains(user.getUsername());
     }
 
     @Test
-    public  void F_getTotalShouldReturnSizeOfOne(){
+    public  void F_getTotal_returnSizeOfOne(){
         int total=userRepository.getTotal();
         assertThat(total).isGreaterThan(10);
     }

@@ -21,5 +21,8 @@ public interface CategoryRepository {
 
     List<Category> getAll();
 
+    void createTable(String table);
+    void renameTable(String oldTable,String newTable);
+    void dropTable(String table);
 
 }

@@ -29,7 +29,7 @@ public class CustomExceptionController {
             String tClass = ((CustomException) e).gettClass().toString();
             String method = ((CustomException) e).getMethod();
             String message = e.getMessage();
-            String stackTrace = getStackTrace(((CustomException) e).getThrowable());
+            String stackTrace=getStackTrace(e);
 
             sb.append(tClass).append(NEWLINE)
                     .append(method).append(NEWLINE)
@@ -46,10 +46,10 @@ public class CustomExceptionController {
 
     }
 
-    private String getStackTrace(Throwable t) {
+    private String getStackTrace(Exception e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        t.printStackTrace(pw);
+        e.printStackTrace(pw);
         return sw.toString();
     }
 

@@ -1,6 +1,5 @@
 package com.ys.app.service.impl;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import com.ys.app.model.Article;
 import com.ys.app.model.Role;
 import com.ys.app.model.User;
@@ -16,7 +15,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Service;
 
-import javax.rmi.CORBA.Util;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,26 +26,32 @@ import java.util.List;
 @Service
 public class ArticleServiceImpl implements ArticleService {
 
-    public static final String SHOULD_NOT_BE_NEGATIVE_VALUE = "Should not be negative value";
-    @Value("${articleservice.write.nopermission}")
-    private String NO_PERMISSION_TO_WRITE_ARTICLE;// = "No Permission to write article";
-    @Value("${articleservice.update.nopermission}")
-    private String NO_PERMISSION_TO_UPDATE_ARTICLE;// = "No permission to update article";
-    @Value("${articleservice.delete.nopermission}")
-    private String NO_PERMISSION_TO_DELETE_ARTICLE;// = "No permission to delete article";
-    @Value("${articleservice.keyword.notempty}")
-    private String SEARCH_KEYWORD_SHOULD_NOT_BE_EMPTY;// = "Search keyword should not be empty";
+
+    @Value("${articleService.write.noPermission?:}")
+    private String NO_PERMISSION_TO_WRITE_ARTICLE;// = "articleservice.write.nopermission";
+    @Value("${articleService.update.noPermission?:}")
+    private String NO_PERMISSION_TO_UPDATE_ARTICLE;// = "articleservice.update.nopermission";
+    @Value("${articleService.delete.noPermission?:}")
+    private String NO_PERMISSION_TO_DELETE_ARTICLE;// = "articleservice.delete.nopermission";
+
 
     private ArticleRepository articleRepository;
     private UserRepository userRepository;
+    private  Role role;
 
     @Autowired
     public ArticleServiceImpl(ArticleRepository articleRepository, UserRepository userRepository) {
 
         this.articleRepository = articleRepository;
         this.userRepository = userRepository;
+        role=Role.USER;
     }
 
+
+    @Override
+    public void setTable(String table) {
+        articleRepository.setTable(table);
+    }
 
     @Override
     public boolean writeArticle(Article article, SecurityContext securityContext) {
@@ -55,19 +59,17 @@ public class ArticleServiceImpl implements ArticleService {
             throw new NullPointerException();
 
 
-        if (hasWritePermission(securityContext, Role.USER) == false)
+        if (hasWritePermission(securityContext, role) == false)
             throw new AccessDeniedException(NO_PERMISSION_TO_WRITE_ARTICLE);
 
         return articleRepository.create(article) >= 1;
     }
 
     @Override
-    public ArticleDTO readArticle(Integer id) throws InvalidArgumentException {
+    public ArticleDTO readArticle(Integer id) {
         if (UtilValidation.isNull(id))
             throw new NullPointerException();
 
-        if(UtilValidation.isNegativeInt(id))
-            throw new InvalidArgumentException(new String[]{SHOULD_NOT_BE_NEGATIVE_VALUE});
 
         Article article = articleRepository.read(id);
         if (article == null)
@@ -89,9 +91,6 @@ public class ArticleServiceImpl implements ArticleService {
         if (UtilValidation.isNull(article, securityContext))
             throw new NullPointerException();
 
-        if (hasWritePermission(securityContext, Role.USER) == false)
-            throw new AccessDeniedException(NO_PERMISSION_TO_UPDATE_ARTICLE);
-
         if (hasUpdatePermission(securityContext, article) == false)
             throw new AccessDeniedException(NO_PERMISSION_TO_UPDATE_ARTICLE);
 
@@ -99,12 +98,9 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean deleteArticle(Integer id, SecurityContext securityContext) throws InvalidArgumentException {
+    public boolean deleteArticle(Integer id, SecurityContext securityContext) {
         if (UtilValidation.isNull(id))
             throw new NullPointerException();
-
-        if(UtilValidation.isNegativeInt(id))
-            throw new InvalidArgumentException(new String[]{SHOULD_NOT_BE_NEGATIVE_VALUE});
 
         if (hasDeletePermission(securityContext, id) == false)
             throw new AccessDeniedException(NO_PERMISSION_TO_DELETE_ARTICLE);
@@ -114,13 +110,10 @@ public class ArticleServiceImpl implements ArticleService {
 
 
     @Override
-    public List<ArticleDTO> getList(Integer pageNo, Integer pageSize) throws InvalidArgumentException {
+    public List<ArticleDTO> getList(Integer pageNo, Integer pageSize) {
         if (UtilValidation.isNull(pageNo, pageSize))
             throw new NullPointerException();
 
-        if(UtilValidation.isNegativeInt(pageNo)) {
-            throw new InvalidArgumentException(new String[]{SHOULD_NOT_BE_NEGATIVE_VALUE});
-        }
 
         List<Article> articleList = articleRepository.getList(pageNo, pageSize);
 
@@ -129,16 +122,9 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleDTO> getListBySearch(Integer pageNo, Integer pageSize, String keyword) throws InvalidArgumentException {
+    public List<ArticleDTO> getListBySearch(Integer pageNo, Integer pageSize, String keyword) {
         if (UtilValidation.isNull(pageNo, pageSize, keyword))
             throw new NullPointerException();
-
-        if(UtilValidation.isNegativeInt(pageNo))
-            throw new InvalidArgumentException(new String[]{SHOULD_NOT_BE_NEGATIVE_VALUE});
-
-        if (keyword.isEmpty())
-            throw new InvalidArgumentException(new String[]{SEARCH_KEYWORD_SHOULD_NOT_BE_EMPTY});
-
 
         List<Article> articleList = articleRepository.getListBySearch(pageNo, pageSize, keyword);
 
@@ -148,57 +134,54 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public UtilPagination getPagination(Integer pageNo, Integer pageSize) throws InvalidArgumentException {
+    public UtilPagination getPagination(Integer pageNo, Integer pageSize) {
         if (UtilValidation.isNull(pageNo))
             throw new NullPointerException();
 
-        if(UtilValidation.isNegativeInt(pageNo))
-            throw new InvalidArgumentException(new String[]{SHOULD_NOT_BE_NEGATIVE_VALUE});
 
         int total = articleRepository.getTotal();
         return new UtilPagination(pageNo, total, pageSize);
     }
 
     @Override
-    public UtilPagination getPaginationBySearch(Integer pageNo, Integer pageSize, String keyword) throws InvalidArgumentException {
+    public UtilPagination getPaginationBySearch(Integer pageNo, Integer pageSize, String keyword) {
         if (UtilValidation.isNull(pageNo, keyword))
             throw new NullPointerException();
 
-        if(UtilValidation.isNegativeInt(pageNo))
-            throw new InvalidArgumentException(new String[]{SHOULD_NOT_BE_NEGATIVE_VALUE});
-
-        if (keyword.isEmpty())
-            throw new InvalidArgumentException(new String[]{SEARCH_KEYWORD_SHOULD_NOT_BE_EMPTY});
 
         int total = articleRepository.getTotalBySearch(keyword);
         return new UtilPagination(pageNo, total, pageSize);
     }
 
     private boolean hasWritePermission(SecurityContext securityContext, Role role) {
-        User user = (User) securityContext.getAuthentication().getDetails();
+        User user = getUser(securityContext);
         int roleId = user.getRoleid();
         return roleId >= role.getId();
     }
 
+    private User getUser(SecurityContext securityContext) {
+        return (User) securityContext.getAuthentication().getDetails();
+    }
+
     private boolean hasUpdatePermission(SecurityContext securityContext, Article article) {
-        User user = (User) securityContext.getAuthentication().getDetails();
+        User user = getUser(securityContext);
         int roleId = user.getRoleid();
         int id = user.getId();
         int userId = article.getUserId();
 
-        return id == userId || roleId >= Role.SUPERADMIN.getId();
+        return id == userId || roleId >= role.getId();
 
     }
 
     private boolean hasDeletePermission(SecurityContext securityContext, Integer articleId) {
-        User user = (User) securityContext.getAuthentication().getDetails();
+        User user = getUser(securityContext);
         int roleId = user.getRoleid();
         int id = user.getId();
 
         Article article = articleRepository.read(articleId);
         int userId = article.getUserId();
 
-        return id == userId || roleId >= Role.SUPERADMIN.getId();
+        return id == userId || roleId >= role.getId();
     }
 
     private List<ArticleDTO> getArticleDTOList(List<Article> articleList) {

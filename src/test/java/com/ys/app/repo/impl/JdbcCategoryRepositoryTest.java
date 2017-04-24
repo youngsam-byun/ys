@@ -25,11 +25,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 
 
-@WebAppConfiguration
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AppConfig_DEV.class})
-@ActiveProfiles("dev")
+@ContextConfiguration(classes = {AppConfig_REPO_TEST.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@WebAppConfiguration
+@ActiveProfiles("dev")
 public class JdbcCategoryRepositoryTest {
 
     @Autowired
@@ -110,6 +111,18 @@ public class JdbcCategoryRepositoryTest {
         assertThat(categoryList.size()).isGreaterThanOrEqualTo(10);
     }
 
+    @Test
+    public  void J_createTable(){
+        categoryRepository.createTable("test123");
+    }
 
+    @Test
+    public  void K_renameable(){
+        categoryRepository.renameTable("test123","test");
+    }
 
+    @Test
+    public  void L_dropTable() {
+        categoryRepository.dropTable("test");
+    }
 }

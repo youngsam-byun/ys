@@ -5,7 +5,7 @@ package com.ys.app.model;
  */
 public enum Role {
 
-    USER(1),OPERATION(2),SUPERADMIN(9);
+    USER(1),OPERATION(5),SUPERADMIN(9);
 
     private final int id;
 

@@ -3,7 +3,6 @@ package com.ys.app.repo.impl;
 
 import com.ys.app.model.Article;
 import com.ys.app.repo.ArticleRepository;
-import config.AppConfig_DEV;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -12,6 +11,7 @@ import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,11 +26,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 
 
-@WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AppConfig_DEV.class})
-@ActiveProfiles("dev")
+@ContextConfiguration(classes = {AppConfig_REPO_TEST.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@WebAppConfiguration
+@ActiveProfiles("dev")
 public class JdbcArticleRepositoryTest {
 
     @Autowired
@@ -43,9 +43,7 @@ public class JdbcArticleRepositoryTest {
     public void init(){
         a = new Article();
         a.setCategoryId(0);
-        a.setNo(0);
-        a.setSequence(0);
-        a.setLevel(0);
+
         a.setTitle("test");
         a.setBody("hahaha");
         a.setCreateTime(new Date());

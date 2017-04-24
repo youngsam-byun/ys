@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface ArticleRepository {
 
+    void setTable(String table);
+
     int create(Article article);
 
     Article read(int id);

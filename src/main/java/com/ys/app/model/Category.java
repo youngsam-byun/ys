@@ -2,9 +2,13 @@ package com.ys.app.model;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class Category {
+
+  @Min(0)
   private int id;
 
   @NotEmpty

@@ -1,4 +1,4 @@
-package config;
+package com.ys.web.controller;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +12,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
  */
 @Configuration
 @PropertySource(value = { "classpath:property/application.properties","classpath:labels/label.properties","classpath:messages/message.properties","validations/validation.properties" })
-public class AppConfig_TEST {
+public class AppConfig_CONTROLLER_TEST {
 
     private static final String DEFAULT_ENCODING = "UTF-8";
 

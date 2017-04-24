@@ -13,9 +13,6 @@ public class ArticleRowMapper extends BaseRowMapper<Article> {
 
     private static final String CATEGORY_ID = "categoryId";
     private static final String ID = "id";
-    private static final String NO = "no";
-    private static final String LEVEL = "level";
-    private static final String SEQUENCE = "sequence";
     private static final String TITLE = "title";
     private static final String BODY = "body";
     private static final String USER_ID = "userId";
@@ -23,6 +20,8 @@ public class ArticleRowMapper extends BaseRowMapper<Article> {
     private static final String UPDATE_TIME = "updateTime";
     private static final String NO_OF_READ = "noOfRead";
     private static final String DELETED = "deleted";
+    private static final String IP="ip";
+    private static final String UPVOTE="upvote";
 
     @Override
     public Article mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -31,15 +30,14 @@ public class ArticleRowMapper extends BaseRowMapper<Article> {
 
         article.setId(rs.getInt(ID));
         article.setCategoryId(rs.getShort(CATEGORY_ID));
-        article.setNo(rs.getInt(NO));
-        article.setLevel(rs.getShort(LEVEL));
-        article.setSequence(rs.getShort(SEQUENCE));
         article.setTitle(rs.getString(TITLE));
         article.setBody(rs.getString(BODY));
         article.setCreateTime(rs.getTimestamp(CREATE_TIME));
         article.setUpdateTime(rs.getTimestamp(UPDATE_TIME));
         article.setUserId(rs.getInt(USER_ID));
         article.setDeleted(rs.getBoolean(DELETED));
+        article.setIp(rs.getString(IP));
+        article.setUpvote(rs.getInt(UPVOTE));
 
         return article;
 
@@ -50,16 +48,15 @@ public class ArticleRowMapper extends BaseRowMapper<Article> {
         return new MapSqlParameterSource()
                 //.addValue("id",article.getId())
                 .addValue(CATEGORY_ID, article.getCategoryId())
-                .addValue(NO, article.getNo())
-                .addValue(LEVEL, article.getLevel())
-                .addValue(SEQUENCE, article.getSequence())
                 .addValue(TITLE, article.getTitle())
                 .addValue(BODY, article.getBody())
                 .addValue(CREATE_TIME, article.getCreateTime())
                 .addValue(UPDATE_TIME, article.getUpdateTime())
                 .addValue(USER_ID, article.getUserId())
                 .addValue(NO_OF_READ, article.getNoOfRead())
-                .addValue(DELETED, article.isDeleted());
+                .addValue(DELETED, article.isDeleted())
+                .addValue(IP,article.getIp())
+                .addValue(UPVOTE,article.getUpvote());
 
     }
 
@@ -68,15 +65,14 @@ public class ArticleRowMapper extends BaseRowMapper<Article> {
         return new MapSqlParameterSource()
                 .addValue(ID, article.getId())
                 .addValue(CATEGORY_ID, article.getCategoryId())
-                .addValue(NO, article.getNo())
-                .addValue(LEVEL, article.getLevel())
-                .addValue(SEQUENCE, article.getSequence())
                 .addValue(TITLE, article.getTitle())
                 .addValue(BODY, article.getBody())
                 .addValue(CREATE_TIME, article.getCreateTime())
                 .addValue(UPDATE_TIME, article.getUpdateTime())
                 .addValue(USER_ID, article.getUserId())
                 .addValue(NO_OF_READ, article.getNoOfRead())
-                .addValue(DELETED, article.isDeleted());
+                .addValue(DELETED, article.isDeleted())
+                .addValue(IP,article.getIp())
+                .addValue(UPVOTE,article.getUpvote());
     }
 }

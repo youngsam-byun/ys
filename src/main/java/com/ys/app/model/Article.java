@@ -3,14 +3,16 @@ package com.ys.app.model;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.Min;
 import java.util.Date;
 
 public class Article {
+    @Min(0)
     private int id;
+
+    @Min(0)
     private int categoryId;
-    private int no;
-    private int level;
-    private int sequence;
+
 
     @NotEmpty
     private String title;
@@ -22,6 +24,8 @@ public class Article {
     private Date updateTime;
     private int noOfRead;
     private boolean deleted;
+    private String ip;
+    private int upvote;
 
     public int getId() {
         return id;
@@ -37,30 +41,6 @@ public class Article {
 
     public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
-    }
-
-    public int getNo() {
-        return no;
-    }
-
-    public void setNo(int no) {
-        this.no = no;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    public int getSequence() {
-        return sequence;
-    }
-
-    public void setSequence(int sequence) {
-        this.sequence = sequence;
     }
 
     public String getTitle() {
@@ -117,5 +97,21 @@ public class Article {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public int getUpvote() {
+        return upvote;
+    }
+
+    public void setUpvote(int upvote) {
+        this.upvote = upvote;
     }
 }

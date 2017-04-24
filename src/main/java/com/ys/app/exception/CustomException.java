@@ -9,13 +9,11 @@ public class CustomException extends RuntimeException {
     private Class tClass;
     private String method;
     private String message;
-    private Throwable throwable;
 
-    public CustomException(Class tClass,String method,String messsage,Throwable throwable ){
+    public CustomException(Class tClass,String method,String messsage ){
         this.tClass=tClass;
         this.method=method;
         this.message=messsage;
-        this.throwable=throwable;
     }
 
     public Class gettClass() {
@@ -43,11 +41,4 @@ public class CustomException extends RuntimeException {
         this.message = message;
     }
 
-    public Throwable getThrowable() {
-        return throwable;
-    }
-
-    public void setThrowable(Throwable throwable) {
-        this.throwable = throwable;
-    }
 }

@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 
 
 @Configuration
-@Import(DataSourceConfig_DEV.class)
+@Import(value = {DataSourceConfig_DEV.class})
 @PropertySource(value = { "classpath:property/application.properties","classpath:labels/label.properties","classpath:messages/message.properties","classpath:validations/validation.properties" })
 @ComponentScan(basePackages = { "com.ys.app" })
 @ActiveProfiles(profiles = {"dev"})

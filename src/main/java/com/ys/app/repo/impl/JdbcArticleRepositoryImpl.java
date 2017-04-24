@@ -18,7 +18,7 @@ import java.util.List;
 public class JdbcArticleRepositoryImpl extends BaseRepository<Article> implements ArticleRepository {
 
 
-    private static final String TABLE = "Article";
+    private static final String TABLE_NAME = "Article";
     private static final String ARTICLE_INS = "Article_INS";
     private static final String ARTICLE_UPD = "Article_UPD";
     private static final String PAGE_NO = "pageNo";
@@ -26,16 +26,23 @@ public class JdbcArticleRepositoryImpl extends BaseRepository<Article> implement
     private static final String ARTICLE_LISTBYSEARCH = "Article_LISTBYSEARCH";
     private static final String ARTICLE_LIST = "Article_LIST";
     private static final String KEYWORD = "keyword";
-    private static final String GET_TOTAL = "getTotal";
-    private static final String GET_TOTAL_BY_SEARCH = "getTotalBySearch";
+    private static final String G_GET_TOTAL = "G_getTotal";
+    private static final String G_GET_TOTAL_BY_SEARCH = "G_getTotalBySearch";
     private static final String ID = "id";
+    private static final String ARTICLE_READ = "Article_READ";
+    public static final String PREFIX = "A_";
 
 
     @Autowired
     public JdbcArticleRepositoryImpl(DataSource dataSource) {
         this.dataSource=dataSource;
         this.baseRowMapper = new ArticleRowMapper();
-        this.setTable(TABLE);
+        this.setTable(PREFIX+TABLE_NAME);
+    }
+
+    @Override
+    public void setTable(String table) {
+        super.setTable(table);
     }
 
     @Override
@@ -45,7 +52,7 @@ public class JdbcArticleRepositoryImpl extends BaseRepository<Article> implement
 
     @Override
     public Article read(int id) {
-        return super.readByStoredProcedure("Article_READ", new SimpleEntry<>(ID, id));
+        return super.executeStoredProcedure(ARTICLE_READ, new SimpleEntry<>(ID, id));
     }
 
     @Override
@@ -72,12 +79,12 @@ public class JdbcArticleRepositoryImpl extends BaseRepository<Article> implement
 
     @Override
     public int getTotal() {
-        return super.getTotal(GET_TOTAL);
+        return super.getTotal(G_GET_TOTAL);
     }
 
     @Override
     public int getTotalBySearch(String keyword) {
-        return super.getTotal(GET_TOTAL_BY_SEARCH,new SimpleEntry<>(KEYWORD,keyword));
+        return super.getTotal(G_GET_TOTAL_BY_SEARCH,new SimpleEntry<>(KEYWORD,keyword));
     }
 
 }

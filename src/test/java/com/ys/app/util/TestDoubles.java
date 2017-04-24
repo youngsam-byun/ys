@@ -19,4 +19,6 @@ public class TestDoubles {
     public  static<T> T mock(Class<T> t){
         return Mockito.mock(t);
     }
+
+    public static <T> T spy(Class<T> t) {return  Mockito.spy(t);}
 }

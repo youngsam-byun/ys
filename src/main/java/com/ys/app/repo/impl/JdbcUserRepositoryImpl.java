@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,21 +19,26 @@ import java.util.List;
 public class JdbcUserRepositoryImpl extends BaseRepository<User> implements UserRepository {
 
 
-    private static final String TABLE = "User";
+    private static final String TABLE_NAME = "User";
     private static final String USER_INS = "User_INS";
     private static final String USER_UPD = "User_UPD";
-    private static final String GET_LIST = "getList";
+    private static final String G_GET_LIST = "G_getList";
     private static final String PAGE_SIZE = "pageSize";
     private static final String PAGE_NO = "pageNo";
     private static final String KEYWORD = "keyword";
-    private static final String GET_TOTAL = "getTotal";
-    private static final String GET_TOTAL_BY_SEARCH = "getTotalBySearch";
+    private static final String G_GET_TOTAL = "G_getTotal";
+    private static final String G_GET_TOTAL_BY_SEARCH = "G_getTotalBySearch";
+    private static final String USER_UPD_PWD = "User_UPD_PWD";
+    private static final String USER_UPD_TRIAL = "User_UPD_Trial";
+    private static final String GET_LIST_BY_SEARCH = "G_getListBySearch";
+    private static final String EMAIL = "email";
+    private static final String UPDATE_TIME = "updateTime";
 
     @Autowired
     public JdbcUserRepositoryImpl(DataSource dataSource) {
         this.dataSource = dataSource;
         this.baseRowMapper = new UserRowMapper();
-        this.setTable(TABLE);
+        this.setTable(TABLE_NAME);
     }
 
     @Override
@@ -46,8 +52,23 @@ public class JdbcUserRepositoryImpl extends BaseRepository<User> implements User
     }
 
     @Override
+    public User readByEmail(String email) {
+        return super.readByColumn(EMAIL,email);
+    }
+
+    @Override
     public int update(User user) {
         return super.update(USER_UPD, user);
+    }
+
+    @Override
+    public int updatePassword(User user) {
+        return super.update(USER_UPD_PWD,user);
+    }
+
+    @Override
+    public int updateTrialCountByOne(String email,Date updateTime) {
+        return (int)super.executeStoredProcedureForObject(USER_UPD_TRIAL,new SimpleEntry<>(EMAIL,email),new SimpleEntry<>(UPDATE_TIME,updateTime));
     }
 
     @Override
@@ -57,22 +78,22 @@ public class JdbcUserRepositoryImpl extends BaseRepository<User> implements User
 
     @Override
     public List<User> getList(int pageNo, int pageSize) {
-        return super.getList(GET_LIST, new SimpleEntry<>(PAGE_NO, pageNo), new SimpleEntry<>(PAGE_SIZE, pageSize));
+        return super.getList(G_GET_LIST, new SimpleEntry<>(PAGE_NO, pageNo), new SimpleEntry<>(PAGE_SIZE, pageSize));
     }
 
     @Override
     public List<User> getListBySearch(int pageNo, int pageSize, String keyword) {
-        return super.getList("getListBySearch", new SimpleEntry<>(PAGE_NO, pageNo), new SimpleEntry<>(PAGE_SIZE, pageSize), new SimpleEntry<>(KEYWORD, keyword));
+        return super.getList(GET_LIST_BY_SEARCH, new SimpleEntry<>(PAGE_NO, pageNo), new SimpleEntry<>(PAGE_SIZE, pageSize), new SimpleEntry<>(KEYWORD, keyword));
 
     }
 
     @Override
     public int getTotal() {
-        return super.getTotal(GET_TOTAL);
+        return super.getTotal(G_GET_TOTAL);
     }
 
     @Override
     public int getTotalBySearch(String keyword) {
-        return super.getTotal(GET_TOTAL_BY_SEARCH, new SimpleEntry<>(KEYWORD, keyword));
+        return super.getTotal(G_GET_TOTAL_BY_SEARCH, new SimpleEntry<>(KEYWORD, keyword));
     }
 }

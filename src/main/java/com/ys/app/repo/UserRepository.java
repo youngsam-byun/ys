@@ -2,6 +2,7 @@ package com.ys.app.repo;
 
 import com.ys.app.model.User;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,7 +13,13 @@ public interface UserRepository {
 
     User read(int id);
 
+    User readByEmail(String email);
+
     int update(User user);
+
+    int updatePassword(User user);
+
+    int updateTrialCountByOne(String email,Date updateTime);
 
     int delete(int id);
 

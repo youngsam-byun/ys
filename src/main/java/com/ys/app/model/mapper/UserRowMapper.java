@@ -33,6 +33,7 @@ public class UserRowMapper extends BaseRowMapper<User> {
     private static final String PROFILE_URL = "profileUrl";
     private static final String IMAGE_URL = "imageUrl";
     private static final String SECRET = "secret";
+    private static final String TRIAL = "trial";
 
     @Override
     public User mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -59,6 +60,8 @@ public class UserRowMapper extends BaseRowMapper<User> {
         user.setNotlocked(rs.getBoolean(NOT_LOCKED));
         user.setCreateTime(rs.getTimestamp(CREATE_TIME));
         user.setUpdateTime(rs.getTimestamp(UPDATE_TIME));
+        user.setTrial(rs.getInt(TRIAL));
+
 
         return user;
     }
@@ -86,7 +89,9 @@ public class UserRowMapper extends BaseRowMapper<User> {
                 .addValue(ENABLED,user.isEnabled())
                 .addValue(NOT_LOCKED,user.isNotlocked())
                 .addValue(CREATE_TIME,user.getCreateTime())
-                .addValue(UPDATE_TIME,user.getUpdateTime());
+                .addValue(UPDATE_TIME,user.getUpdateTime())
+                .addValue(TRIAL,user.getTrial())
+                ;
     }
 
     @Override
@@ -112,6 +117,8 @@ public class UserRowMapper extends BaseRowMapper<User> {
                 .addValue(ENABLED,user.isEnabled())
                 .addValue(NOT_LOCKED,user.isNotlocked())
                 .addValue(CREATE_TIME,user.getCreateTime())
-                .addValue(UPDATE_TIME,user.getUpdateTime());
+                .addValue(UPDATE_TIME,user.getUpdateTime())
+                .addValue(TRIAL,user.getTrial())
+                ;
     }
 }

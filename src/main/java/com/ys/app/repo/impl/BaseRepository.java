@@ -18,13 +18,20 @@ import java.util.Map;
  */
 @SuppressWarnings(value = {"unchecked","WeakerAccess"})
 public abstract class BaseRepository<T> {
-    private static final String T = "T";
+    
+    private static final String KEY_T = "T";
     private static final int INDEX = 0;
     private static final String TABLE = "table";
     private static final String COLUMN_NAME = "columnName";
+    private static final String COLUMN_VALUE = "value";
     private static final String ID = "id";
     private static final String KEYWORD = "keyword";
-    private static final String GET_LIST_ALL = "getListAll";
+    private static final String G_GET_LIST_ALL = "G_getListAll";
+    private static final String G_READ_BY_COLUMN = "G_readByColumn";
+    private static final String G_READ_BY_ID = "G_readById";
+    private static final String G_DELETE_BY_ID = "G_deleteById";
+    private static final String G_DELETE_BY_UPDATE_ID = "G_deleteByUpdateId";
+    private static final String G_DELETE_BY_KEY_WORD = "G_deleteByKeyWord";
 
     protected String table;
     protected DataSource dataSource;
@@ -43,7 +50,7 @@ public abstract class BaseRepository<T> {
 
     protected final T readbyId(int id) {
         Map<String, Object> hashMap;
-        String storedProcedure = "readById";
+        String storedProcedure = G_READ_BY_ID;
         try {
 
             SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>("id", id));
@@ -56,9 +63,9 @@ public abstract class BaseRepository<T> {
 
     protected final T readByColumn(String columnName, String value) {
         Map<String, Object> hashMap;
-        String storedProcedure = "readByColumn";
+        String storedProcedure = G_READ_BY_COLUMN;
         try {
-            SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>(COLUMN_NAME, columnName), new SimpleEntry<>("value", value));
+            SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>(COLUMN_NAME, columnName), new SimpleEntry<>(COLUMN_VALUE, value));
             return execute(storedProcedure, sqlParameterSource);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
@@ -66,9 +73,20 @@ public abstract class BaseRepository<T> {
         }
     }
 
-    protected final <E> E readByStoredProcedure(String procedureName, SimpleEntry<String, Object>... requiredParameters) {
+    protected final void executeSimple(String procedureName, SimpleEntry<String, Object>... requiredParameters) {
+        SqlParameterSource sqlParameterSource = createParameters(requiredParameters);
+        simpleJdbcCall= new SimpleJdbcCall(dataSource).withProcedureName(procedureName);
+        simpleJdbcCall.execute(sqlParameterSource);
+    }
+
+    protected final <E> E executeStoredProcedure(String procedureName, SimpleEntry<String, Object>... requiredParameters) {
         SqlParameterSource sqlParameterSource = createParameters(requiredParameters);
         return (E) execute(procedureName, sqlParameterSource);
+    }
+
+    protected final int executeStoredProcedureForObject(String procedureName, SimpleEntry<String, Object>... requiredParameters) {
+        SqlParameterSource sqlParameterSource = createParameters(requiredParameters);
+        return  executeObject(procedureName, sqlParameterSource);
     }
 
     protected final int update(String storedProcedure, T t) {
@@ -77,21 +95,18 @@ public abstract class BaseRepository<T> {
     }
 
     protected final int deleteById(int id) {
-        String storedProcedure = "deleteById";
         SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>(ID, id));
-        return executeObject(storedProcedure, sqlParameterSource);
+        return executeObject(G_DELETE_BY_ID, sqlParameterSource);
     }
 
     protected final int deleteByUpdateId(int id) {
-        String storedProcedure = "deleteByUpdateId";
         SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>(ID, id));
-        return executeObject(storedProcedure, sqlParameterSource);
+        return executeObject(G_DELETE_BY_UPDATE_ID, sqlParameterSource);
     }
 
     protected final int deleteBySearch(String keyword) {
-        String storedProcedure = "deleteByKeyWord";
         SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>(KEYWORD, keyword));
-        return executeObject(storedProcedure, sqlParameterSource);
+        return executeObject(G_DELETE_BY_KEY_WORD, sqlParameterSource);
     }
 
 
@@ -99,10 +114,10 @@ public abstract class BaseRepository<T> {
 
         try {
             SqlParameterSource sqlParameterSource = createParameters(requiredParameters);
-            simpleJdbcCall= new SimpleJdbcCall(dataSource).withProcedureName(storedProcedure).returningResultSet(T, baseRowMapper);
+            simpleJdbcCall= new SimpleJdbcCall(dataSource).withProcedureName(storedProcedure).returningResultSet(KEY_T, baseRowMapper);
             Map<String, Object> resultHashMap = simpleJdbcCall.execute(sqlParameterSource);
 
-            List<T> resultList = (ArrayList<T>) resultHashMap.get("T");
+            List<T> resultList = (ArrayList<T>) resultHashMap.get(KEY_T);
 
             if (resultList != null && resultList.size() > 0)
                 return resultList;
@@ -129,10 +144,10 @@ public abstract class BaseRepository<T> {
     }
 
     protected  final  List<T> getListAll(){
-        simpleJdbcCall=new  SimpleJdbcCall(dataSource).withProcedureName(GET_LIST_ALL).returningResultSet("T",baseRowMapper);
+        simpleJdbcCall=new  SimpleJdbcCall(dataSource).withProcedureName(G_GET_LIST_ALL).returningResultSet(KEY_T,baseRowMapper);
         Map<String, Object> resultHashMap = simpleJdbcCall.execute(new MapSqlParameterSource().addValue(TABLE,table));
 
-        List<T> resultList = (ArrayList<T>) resultHashMap.get("T");
+        List<T> resultList = (ArrayList<T>) resultHashMap.get(KEY_T);
 
         if (resultList != null && resultList.size() > 0)
             return resultList;
@@ -170,9 +185,9 @@ public abstract class BaseRepository<T> {
 
     private T execute(String procedureName, SqlParameterSource sqlParameterSource) {
 
-        simpleJdbcCall= new SimpleJdbcCall(dataSource).withProcedureName(procedureName).returningResultSet("T", baseRowMapper);
+        simpleJdbcCall= new SimpleJdbcCall(dataSource).withProcedureName(procedureName).returningResultSet(KEY_T, baseRowMapper);
         Map<String, Object> resultHashMap = simpleJdbcCall.execute(sqlParameterSource);
-        List<T> resultList = (ArrayList<T>) resultHashMap.get("T");
+        List<T> resultList = (ArrayList<T>) resultHashMap.get(KEY_T);
 
         if (resultList != null && resultList.size() > 0)
             return resultList.get(INDEX);

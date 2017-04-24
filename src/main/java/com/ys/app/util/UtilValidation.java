@@ -13,11 +13,21 @@ public class UtilValidation {
         return false;
     }
 
-    public  static  boolean isPositiveInt(Integer i){
-        return i>0;
+    public  static  boolean isPositiveInt(Integer... is){
+
+        for(Integer i:is) {
+             if(i>0)
+                 return true;
+        }
+        return false;
     }
 
-    public  static  boolean isNegativeInt(Integer i){
-        return i<0;
+    public  static  boolean isNegativeInt(Integer... is){
+        for(Integer i:is) {
+            if(i<0)
+                return true;
+        }
+        return false;
+
     }
 }
