@@ -25,6 +25,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -53,6 +54,7 @@ public class ArticleControllerTest {
     @Test
     public  void A_home_Thorw404Exception() throws Exception {
         mockMVC.perform(get("/article/listA")).andExpect(status().isNotFound());
+        verifyNoMoreInteractions(articleService);
     }
 
     @Test
@@ -62,6 +64,7 @@ public class ArticleControllerTest {
         } catch (Exception e) {
             assertThat(e).hasCauseInstanceOf(CustomException.class);
         }
+        verifyNoMoreInteractions(articleService);
     }
 
     @Test
@@ -69,19 +72,22 @@ public class ArticleControllerTest {
             mockMVC.perform(get("/article/list/1"))
                     .andDo(print())
                     .andExpect(status().isOk())
-            .andExpect(view().name("/article/list.jsp"));
+            .andExpect(view().name("/article/article_list.jsp"));
             verify(articleService,times(1)).getList(1,10);
             verify(articleService,times(1)).getPagination(1,10);
+
+        verifyNoMoreInteractions(articleService);
     }
 
     @Test
     public  void D_home_ForwardToListingPage() throws Exception{
 
         mockMVC.perform(get("/article/list")).andExpect(status().isOk())
-                .andExpect(view().name("/article/list.jsp"));
+                .andExpect(view().name("/article/article_list.jsp"));
         verify(articleService,times(1)).getList(1,10);
         verify(articleService,times(1)).getPagination(1,10);
 
+        verifyNoMoreInteractions(articleService);
     }
 
     @Test
@@ -93,15 +99,17 @@ public class ArticleControllerTest {
             assertThat(e).hasCauseInstanceOf(CustomException.class);
         }
 
-
+        verifyNoMoreInteractions(articleService);
     }
 
     @Test
     public  void F_read_return200() throws Exception {
         when(articleService.readArticle(431)).thenReturn(new ArticleDTO());
         mockMVC.perform(get("/article/read/431")).andExpect(status().isOk())
-                .andExpect(view().name("/article/read.jsp"));;
+                .andExpect(view().name("/article/article_read.jsp"));
         verify(articleService,times(1)).readArticle(431);
+
+        verifyNoMoreInteractions(articleService);
     }
 
 
@@ -112,12 +120,15 @@ public class ArticleControllerTest {
         } catch (Exception e) {
             assertThat(e).hasCauseInstanceOf(CustomException.class);
         }
+        verifyNoMoreInteractions(articleService);
     }
 
     @Test
-    public  void H_get_write_returnWriteJspPage() throws  Exception{
+    public  void H_getWrite_returnWriteJspPage() throws  Exception{
 
-        mockMVC.perform(get("/article/write")).andExpect(view().name("/article/write.jsp"));
+        mockMVC.perform(get("/article/write")).andExpect(view().name("/article/article_write.jsp"));
+
+        verifyNoMoreInteractions(articleService);
     }
 
     @Test
@@ -128,8 +139,9 @@ public class ArticleControllerTest {
                 .param("body","body").param("userId","1").param("createTime","20/04/2017")
                         .param("updateTime","20/04/2017").param("noOfRead","0")
                 .param("deleted","false")
-        ).andExpect(view().name("/article/write.jsp"));
+        ).andExpect(view().name("/article/article_write.jsp"));
 
+        verifyNoMoreInteractions(articleService);
     }
 
 
@@ -141,10 +153,10 @@ public class ArticleControllerTest {
                 .param("body","").param("userId","1").param("createTime","20/04/2017")
                 .param("updateTime","20/04/2017").param("noOfRead","0")
                 .param("deleted","false")
-        ).andExpect(view().name("/article/write.jsp"));
+        ).andExpect(view().name("/article/article_write.jsp"));
 
 
-
+        verifyNoMoreInteractions(articleService);
     }
 
 
@@ -172,8 +184,9 @@ public class ArticleControllerTest {
                 .param("body","body").param("userId","1").param("createTime","2017/04/20")
                 .param("updateTime","2017/04/20").param("noOfRead","0")
                 .param("deleted","false")
-        ).andDo(print()).andExpect(view().name("/article/list.jsp"));
+        ).andDo(print()).andExpect(redirectedUrl("/article/list/1"));
 
         verify(articleService,times(1)).writeArticle(any(),any());
+        verifyNoMoreInteractions(articleService);
     }
 }

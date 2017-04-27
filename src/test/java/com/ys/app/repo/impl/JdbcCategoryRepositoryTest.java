@@ -3,7 +3,6 @@ package com.ys.app.repo.impl;
 
 import com.ys.app.model.Category;
 import com.ys.app.repo.CategoryRepository;
-import config.AppConfig_DEV;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;

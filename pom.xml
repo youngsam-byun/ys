@@ -28,12 +28,23 @@
 
         <hibernate-validator.version>5.2.0.Final</hibernate-validator.version>
 
+
         <commons-dbcp2.version>2.1.1</commons-dbcp2.version>
         <mysql.version>5.1.41</mysql.version>
+
+        <commons-lang3.version>3.5</commons-lang3.version>
+
         <jackson-databind.version>2.8.2</jackson-databind.version>
 
         <commons-fileupload.version>1.3.2</commons-fileupload.version>
         <commons-io.version>2.5</commons-io.version>
+
+        <!--testing libraray version denoted here-->
+        <assertj-core.version>3.6.2</assertj-core.version>
+        <junit-hierarchicalcontextrunner.version>4.12.1</junit-hierarchicalcontextrunner.version>
+        <mockito-all.version>1.10.19</mockito-all.version>
+        <hamcrest-library.version>1.3</hamcrest-library.version>
+
 
 
     </properties>
@@ -49,12 +60,12 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.6.2</version>
+            <version>${assertj-core.version}</version>
         </dependency>
         <dependency>
             <groupId>de.bechte.junit</groupId>
             <artifactId>junit-hierarchicalcontextrunner</artifactId>
-            <version>4.12.1</version>
+            <version>${junit-hierarchicalcontextrunner.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -62,14 +73,14 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.10.19</version>
+            <version>${mockito-all.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-all -->
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
-            <version>1.3</version>
+            <version>${hamcrest-library.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -182,6 +193,13 @@
             <version>${mysql.version}</version>
         </dependency>
 
+        <!--commonslang3 for Random alphanumeric generation-->
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
 
         <!-- Spring Security and its tag library -->
         <dependency>
@@ -253,6 +271,7 @@
             <artifactId>tiles-jsp</artifactId>
             <version>${org.apache.tiles-version}</version>
         </dependency>
+
 
     </dependencies>
     <build>

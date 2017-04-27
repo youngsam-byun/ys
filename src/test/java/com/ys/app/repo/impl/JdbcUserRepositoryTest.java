@@ -38,27 +38,25 @@ public class JdbcUserRepositoryTest {
     static User user;
     static int returnId;
 
+    private  static  String lastEmail;
     @Before
     public void init(){
         user =new User();
-        user.setProviderid("ys");
-        user.setConnectionid("1234ABCD");
+        user.setProviderId("ys");
+        user.setConnectionId("1234ABCD");
         user.setProviderConnectionid("ys1234ABCD");
         user.setRank(1);
-        user.setDisplayname("ys test");
+        user.setDisplayName("ys test");
         user.setProfileUrl("http://www.youngsam.com/profile");
-        user.setImageurl("http://www.google.com/image");
-        user.setAccesstoken("randomalaphanumeric");
-        user.setSecret("secret randomString");
-        user.getRefreshtoken();
-        user.setExpiretime(10000L);
+        user.setImageUrl("http://www.google.com/image");
+        user.getRefreshToken();
+        user.setExpireTime(10000L);
         user.setEmail("hah@email.com");
         user.setUsername("ys username");
         user.setPassword("ys password");
-        user.setRoleid(1);
-        user.setStr("randomStr");
+        user.setRoleId(1);
         user.setEnabled(true);
-        user.setNotlocked(true);
+        user.setNotLocked(true);
         user.setCreateTime(new Date());
         user.setUpdateTime(new Date());
 
@@ -67,7 +65,10 @@ public class JdbcUserRepositoryTest {
 
     @Test
     public void A_create_returnDataReturnId(){
+
         for(int i=0;i<10;i++) {
+            lastEmail=i+"@email.com";
+            user.setEmail(lastEmail);
             returnId = userRepository.create(user);
         }
         assertThat(returnId).isGreaterThanOrEqualTo(1);
@@ -82,8 +83,8 @@ public class JdbcUserRepositoryTest {
 
     @Test
     public void B_readByEmail_EqualToReturnId(){
-        User u=userRepository.readByEmail("hah@email.com");
-        assertThat(u.getEmail()).isEqualTo("hah@email.com");
+        User u=userRepository.readByEmail("1@email.com");
+        assertThat(u.getEmail()).isEqualTo("1@email.com");
 
     }
 
@@ -100,10 +101,9 @@ public class JdbcUserRepositoryTest {
     @Test
     @Transactional
     public void C_updatePassword_Return1(){
-        User u=new User();
-        u.setId(1);
-        u.setPassword("hahaha");
-        int returnNumber=userRepository.updatePassword(u);
+        user.setPassword("new password");
+        user.setEmail(lastEmail);
+        int returnNumber=userRepository.updatePassword(user);
         assertThat(returnNumber).isEqualTo(1);
     }
 
@@ -112,7 +112,7 @@ public class JdbcUserRepositoryTest {
     public void C_updateTrialCountByOne_Return1(){
         User u=new User();
         u.setId(1);
-        u.setEmail("hah@email.com");
+        u.setEmail("1@email.com");
         int returnNumber=userRepository.updateTrialCountByOne(u.getEmail(),new Date());
         assertThat(returnNumber).isGreaterThanOrEqualTo(1);
     }
@@ -134,7 +134,7 @@ public class JdbcUserRepositoryTest {
     @Test
     public  void F_getTotal_returnSizeOfOne(){
         int total=userRepository.getTotal();
-        assertThat(total).isGreaterThan(10);
+        assertThat(total).isGreaterThanOrEqualTo(10);
     }
 
     @Test

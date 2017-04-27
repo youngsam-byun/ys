@@ -1,6 +1,5 @@
 package com.ys.web.controller;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import com.ys.app.exception.CustomException;
 import com.ys.app.model.Article;
 import com.ys.app.model.dto.ArticleDTO;
@@ -9,9 +8,8 @@ import com.ys.app.util.UtilPagination;
 import com.ys.app.util.UtilValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * Created by byun.ys on 4/18/2017.
@@ -31,17 +26,18 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class ArticleController {
 
     private static final String FOLDER="/article";
-    private static final String LIST_JSP = "/list.jsp";
-    private static final String READ_JSP = "/read.jsp";
-    private static final String WRITE_JSP = "/write.jsp";
+    private static final String PAGE_LIST = "/article_list.jsp";
+    private static final String PAGE_READ = "/article_read.jsp";
+    private static final String PAGE_WRITE = "/article_write.jsp";
 
     private static final String PAGINATION = "pagination";
-    private static final String ARTICLE_DTO_LIST = "articleDTOList";
+    private static final String ARTICLE_DTO_LIST= "articleDTOList";
     private static final String ARTICLE_DTO = "articleDTO";
     private static final String READ = "read";
     private static final String WRITE = "write";
     private static final String DELETE = "delete";
     private static final String LIST = "list";
+    public static final String REDIRECT_ARTICLE_LIST_1 = "redirect:/article/list/1";
 
 
     @Value("${articleController.read.empty}")
@@ -86,32 +82,32 @@ public class ArticleController {
         modelAndview.addObject(ARTICLE_DTO_LIST,articleDTOList);
         modelAndview.addObject(PAGINATION,utilPagination);
 
-        modelAndview.setViewName(FOLDER+ LIST_JSP);
+        modelAndview.setViewName(FOLDER+ PAGE_LIST);
         return modelAndview;
     }
 
 
     @GetMapping(value = {"/write"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    public ModelAndView get_write(Article article,ModelAndView modelAndView){
+    public ModelAndView getWrite(Article article, ModelAndView modelAndView){
         modelAndView.addObject("article",article);
-        modelAndView.setViewName(FOLDER+ WRITE_JSP);
+        modelAndView.setViewName(FOLDER+ PAGE_WRITE);
         return modelAndView;
 
     }
 
     @PostMapping(value = {"/write"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    public ModelAndView write(@ModelAttribute("article") @Valid Article article, BindingResult bindingResult, ModelAndView modelAndView) {
+    public ModelAndView write(@ModelAttribute("article") @Valid Article article, BindingResult bindingResult, ModelAndView modelAndView, final Authentication authentication) {
 
         if(bindingResult.hasErrors()) {
-            modelAndView.setViewName(FOLDER+WRITE_JSP);
+            modelAndView.setViewName(FOLDER+ PAGE_WRITE);
             return modelAndView;
         }
 
-        Boolean b=articleService.writeArticle(article,SecurityContextHolder.getContext());
+        Boolean b=articleService.writeArticle(article,authentication);
         if(b) {
-            modelAndView.setViewName(FOLDER+LIST_JSP);
+            modelAndView.setViewName(REDIRECT_ARTICLE_LIST_1);
             return  modelAndView;
         }else
             throw new CustomException(this.getClass(), WRITE, ARTICLECONTROLLER_WRITE_FAIL);
@@ -130,22 +126,22 @@ public class ArticleController {
             throw new CustomException(this.getClass(), READ, ARTICLECONTROLLER_READ_EMPTY);
 
         modelAndview.addObject(ARTICLE_DTO,articleDTO);
-        modelAndview.setViewName(FOLDER+ READ_JSP);
+        modelAndview.setViewName(FOLDER+ PAGE_READ);
         return modelAndview;
     }
 
 
     @PostMapping( value = {"/delete/{id}"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    public ModelAndView delete(ModelAndView modelAndview, @PathVariable(value = "id") Integer id) {
+    public ModelAndView delete(ModelAndView modelAndview, @PathVariable(value = "id") Integer id,final  Authentication authentication) {
 
         if(UtilValidation.isNegativeInt(id))
             throw new CustomException(this.getClass(),DELETE,ID_SHOULD_NOT_BE_NEGATIVE_VALUE);
 
-        Boolean b=articleService.deleteArticle(id, SecurityContextHolder.getContext());
+        Boolean b=articleService.deleteArticle(id, authentication);
 
         if(b) {
-            modelAndview.setViewName(FOLDER + LIST_JSP);
+            modelAndview.setViewName(REDIRECT_ARTICLE_LIST_1);
             return modelAndview;
         }else
             throw new CustomException(this.getClass(), DELETE, ARTICLECONTROLLER_DELETE_FAIL);

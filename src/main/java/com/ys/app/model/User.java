@@ -1,58 +1,92 @@
 package com.ys.app.model;
 
+import com.ys.app.model.validator.FieldMatch;
+import com.ys.app.model.validator.IsUnique;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.validation.constraints.Min;
 import java.util.Date;
 
+//@FieldMatch.List({ @FieldMatch(first = "password", second = "passwordConfirm") })
 public class User {
-    private String providerid;
-    private String connectionid;
-    private String providerconnectionid;
-    private int rank;
-    private String displayname;
-    private String profileUrl;
-    private String imageurl;
-    private String accesstoken;
-    private String secret;
-    private String refreshtoken;
-    private Long expiretime;
 
-    @Min(0)
+    private static final String DEFAULT_PROVIDER="APP";
+
+    private String providerId;
+    private String connectionId;
+    private String providerConnectionId;
+    private int rank;
+    private String displayName;
+    private String profileUrl;
+    private String imageUrl;
+    private String accessToken;
+    private String secret;
+    private String refreshToken;
+    private Long expireTime;
+
     private int id;
+
+    @NotEmpty
+    @Email
+    //@IsUnique(fieldName = "user_email")
     private String email;
+
+    @NotEmpty
     private String username;
+
+    @NotEmpty
     private String password;
-    private int roleid;
+
+    @NotEmpty
+    private String passwordConfirm;
+
+
+    @Min(1)
+    private int roleId;
+
     private String str;
     private boolean enabled;
-    private boolean notlocked;
+    private boolean notLocked;
     private Date createTime;
     private Date updateTime;
-
     private int trial;
 
-
-    public String getProviderid() {
-        return providerid;
+    public User(){
+        providerId=DEFAULT_PROVIDER;
+        connectionId= RandomStringUtils.randomAlphanumeric(10);
+        providerConnectionId =DEFAULT_PROVIDER+connectionId;
+        roleId=Role.USER.getId();
+        createTime=new Date();
+        updateTime=new Date();
+        trial=0;
+        str=RandomStringUtils.randomAlphabetic(10);
     }
 
-    public void setProviderid(String providerid) {
-        this.providerid = providerid;
+
+    public String getProviderId() {
+        return providerId;
     }
 
-    public String getConnectionid() {
-        return connectionid;
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
     }
 
-    public void setConnectionid(String connectionid) {
-        this.connectionid = connectionid;
+    public String getConnectionId() {
+        return connectionId;
+    }
+
+    public void setConnectionId(String connectionId) {
+        this.connectionId = connectionId;
     }
 
     public String getProviderConnectionid() {
-        return providerconnectionid;
+        return providerConnectionId;
     }
 
     public void setProviderConnectionid(String providerconnectionid) {
-        this.providerconnectionid = providerconnectionid;
+        this.providerConnectionId = providerconnectionid;
     }
 
     public int getRank() {
@@ -63,12 +97,12 @@ public class User {
         this.rank = rank;
     }
 
-    public String getDisplayname() {
-        return displayname;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setDisplayname(String displayname) {
-        this.displayname = displayname;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getProfileUrl() {
@@ -79,20 +113,20 @@ public class User {
         this.profileUrl = profileUrl;
     }
 
-    public String getImageurl() {
-        return imageurl;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImageurl(String imageurl) {
-        this.imageurl = imageurl;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public String getAccesstoken() {
-        return accesstoken;
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public void setAccesstoken(String accesstoken) {
-        this.accesstoken = accesstoken;
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public String getSecret() {
@@ -103,20 +137,20 @@ public class User {
         this.secret = secret;
     }
 
-    public String getRefreshtoken() {
-        return refreshtoken;
+    public String getRefreshToken() {
+        return refreshToken;
     }
 
-    public void setRefreshtoken(String refreshtoken) {
-        this.refreshtoken = refreshtoken;
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
-    public Long getExpiretime() {
-        return expiretime;
+    public Long getExpireTime() {
+        return expireTime;
     }
 
-    public void setExpiretime(Long expiretime) {
-        this.expiretime = expiretime;
+    public void setExpireTime(Long expireTime) {
+        this.expireTime = expireTime;
     }
 
     public int getId() {
@@ -151,12 +185,20 @@ public class User {
         this.password = password;
     }
 
-    public int getRoleid() {
-        return roleid;
+    public String getPasswordConfirm() {
+        return passwordConfirm;
     }
 
-    public void setRoleid(int roleid) {
-        this.roleid = roleid;
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
+    }
+
+    public int getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
 
     public String getStr() {
@@ -175,12 +217,12 @@ public class User {
         this.enabled = enabled;
     }
 
-    public boolean isNotlocked() {
-        return notlocked;
+    public boolean isNotLocked() {
+        return notLocked;
     }
 
-    public void setNotlocked(boolean notlocked) {
-        this.notlocked = notlocked;
+    public void setNotLocked(boolean notLocked) {
+        this.notLocked = notLocked;
     }
 
     public Date getCreateTime() {

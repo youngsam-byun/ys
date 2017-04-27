@@ -1,9 +1,12 @@
 package com.ys.app.service;
 
 import com.ys.app.model.Comment;
+import com.ys.app.model.dto.CommentDTO;
 import com.ys.app.util.UtilPagination;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -12,11 +15,17 @@ import java.util.List;
 public interface CommentService {
 
     void setTable(String table);
-    boolean  writeComment(Comment comment, SecurityContext securityContext);
-    Comment readComment(Integer id)  ;
-    boolean  updateComment(Comment comment, SecurityContext securityContext);
-    boolean  deleteComment(Integer id, SecurityContext securityContext) ;
-    List<Comment> getList(Integer pageNo, Integer pageSize) ;
-    UtilPagination getPagination(Integer pageNo, Integer pageSize) ;
+
+    boolean writeComment(Comment comment, Principal principal );
+
+    CommentDTO readComment(Integer id);
+
+    boolean updateComment(Comment comment, Principal  principal );
+
+    boolean deleteComment(Integer id, Principal  principal );
+
+    List<CommentDTO> getList(Integer pageNo, Integer pageSize);
+
+    UtilPagination getPagination(Integer pageNo, Integer pageSize);
 
 }

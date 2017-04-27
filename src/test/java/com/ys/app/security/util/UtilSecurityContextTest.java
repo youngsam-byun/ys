@@ -1,4 +1,4 @@
-package com.ys.app.security;
+package com.ys.app.security.util;
 
 import com.ys.app.model.User;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,7 +14,7 @@ import java.util.Collection;
  */
 public class UtilSecurityContextTest {
 
-    public static SecurityContext returnSecurityContext(User user,int roleId) {
+    public static Authentication returnAuthentication(User user, int roleId) {
 
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken("userName", "password");
 
@@ -38,7 +38,7 @@ public class UtilSecurityContextTest {
             @Override
             public Object getDetails() {
 
-                user.setRoleid(roleId);
+                user.setRoleId(roleId);
                 return user;
             }
 
@@ -61,6 +61,6 @@ public class UtilSecurityContextTest {
         authRequest.setDetails(user);
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authentication);
-        return securityContext;
+        return securityContext.getAuthentication();
     }
 }

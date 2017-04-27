@@ -39,25 +39,25 @@ public class UserRowMapper extends BaseRowMapper<User> {
     public User mapRow(ResultSet rs, int rowNum) throws SQLException {
 
         User user = new User();
-        user.setProviderid(PROVIDER_ID);
-        user.setConnectionid(CONNECTION_ID);
+        user.setProviderId(PROVIDER_ID);
+        user.setConnectionId(CONNECTION_ID);
         user.setProviderConnectionid(PROVIDER_CONNECTION_ID);
         user.setRank(rs.getInt(RANK));
-        user.setDisplayname(rs.getString(DISPLAY_NAME));
+        user.setDisplayName(rs.getString(DISPLAY_NAME));
         user.setProfileUrl(rs.getString(PROFILE_URL));
-        user.setImageurl(rs.getString(IMAGE_URL));
-        user.setAccesstoken(rs.getString(ACCESS_TOKEN));
+        user.setImageUrl(rs.getString(IMAGE_URL));
+        user.setAccessToken(rs.getString(ACCESS_TOKEN));
         user.setSecret(rs.getString(SECRET));
-        user.setRefreshtoken(rs.getString(REFRESH_TOKEN));
-        user.setExpiretime(rs.getLong(EXPIRE_TIME));
+        user.setRefreshToken(rs.getString(REFRESH_TOKEN));
+        user.setExpireTime(rs.getLong(EXPIRE_TIME));
         user.setId(rs.getInt(ID));
         user.setEmail(rs.getString(EMAIL));
         user.setUsername(rs.getString(USERNAME));
         user.setPassword(rs.getString(PASSWORD));
-        user.setRoleid(rs.getInt(ROLE_ID));
+        user.setRoleId(rs.getInt(ROLE_ID));
         user.setStr(rs.getString(STR));
         user.setEnabled(rs.getBoolean(ENABLED));
-        user.setNotlocked(rs.getBoolean(NOT_LOCKED));
+        user.setNotLocked(rs.getBoolean(NOT_LOCKED));
         user.setCreateTime(rs.getTimestamp(CREATE_TIME));
         user.setUpdateTime(rs.getTimestamp(UPDATE_TIME));
         user.setTrial(rs.getInt(TRIAL));
@@ -69,25 +69,25 @@ public class UserRowMapper extends BaseRowMapper<User> {
     @Override
     public MapSqlParameterSource createParameterSource(User user) {
         return new MapSqlParameterSource()
-                .addValue(PROVIDER_ID,user.getProviderid())
-                .addValue(CONNECTION_ID,user.getConnectionid())
+                .addValue(PROVIDER_ID,user.getProviderId())
+                .addValue(CONNECTION_ID,user.getConnectionId())
                 .addValue(PROVIDER_CONNECTION_ID,user.getProviderConnectionid())
                 .addValue(RANK,user.getRank())
-                .addValue(DISPLAY_NAME,user.getDisplayname())
+                .addValue(DISPLAY_NAME,user.getDisplayName())
                 .addValue(PROFILE_URL,user.getProfileUrl())
-                .addValue(IMAGE_URL,user.getImageurl())
-                .addValue(ACCESS_TOKEN,user.getAccesstoken())
+                .addValue(IMAGE_URL,user.getImageUrl())
+                .addValue(ACCESS_TOKEN,user.getAccessToken())
                 .addValue(SECRET,user.getSecret())
-                .addValue(REFRESH_TOKEN,user.getRefreshtoken())
-                .addValue(EXPIRE_TIME,user.getExpiretime())
+                .addValue(REFRESH_TOKEN,user.getRefreshToken())
+                .addValue(EXPIRE_TIME,user.getExpireTime())
 //                /.addValue(ID,user.getId())
                 .addValue(EMAIL,user.getEmail())
                 .addValue(USERNAME,user.getUsername())
                 .addValue(PASSWORD,user.getPassword())
-                .addValue(ROLE_ID,user.getRoleid())
+                .addValue(ROLE_ID,user.getRoleId())
                 .addValue(STR,user.getStr())
                 .addValue(ENABLED,user.isEnabled())
-                .addValue(NOT_LOCKED,user.isNotlocked())
+                .addValue(NOT_LOCKED,user.isNotLocked())
                 .addValue(CREATE_TIME,user.getCreateTime())
                 .addValue(UPDATE_TIME,user.getUpdateTime())
                 .addValue(TRIAL,user.getTrial())
@@ -97,25 +97,25 @@ public class UserRowMapper extends BaseRowMapper<User> {
     @Override
     public MapSqlParameterSource updateParameterSource(User user) {
         return new MapSqlParameterSource()
-                .addValue(PROVIDER_ID,user.getProviderid())
-                .addValue(CONNECTION_ID,user.getConnectionid())
+                .addValue(PROVIDER_ID,user.getProviderId())
+                .addValue(CONNECTION_ID,user.getConnectionId())
                 .addValue(PROVIDER_CONNECTION_ID,user.getProviderConnectionid())
                 .addValue(RANK,user.getRank())
-                .addValue(DISPLAY_NAME,user.getDisplayname())
+                .addValue(DISPLAY_NAME,user.getDisplayName())
                 .addValue(PROFILE_URL,user.getProfileUrl())
-                .addValue(IMAGE_URL,user.getImageurl())
-                .addValue(ACCESS_TOKEN,user.getAccesstoken())
+                .addValue(IMAGE_URL,user.getImageUrl())
+                .addValue(ACCESS_TOKEN,user.getAccessToken())
                 .addValue(SECRET,user.getSecret())
-                .addValue(REFRESH_TOKEN,user.getRefreshtoken())
-                .addValue(EXPIRE_TIME,user.getExpiretime())
+                .addValue(REFRESH_TOKEN,user.getRefreshToken())
+                .addValue(EXPIRE_TIME,user.getExpireTime())
                 .addValue(ID,user.getId())
                 .addValue(EMAIL,user.getEmail())
                 .addValue(USERNAME,user.getUsername())
                 .addValue(PASSWORD,user.getPassword())
-                .addValue(ROLE_ID,user.getRoleid())
+                .addValue(ROLE_ID,user.getRoleId())
                 .addValue(STR,user.getStr())
                 .addValue(ENABLED,user.isEnabled())
-                .addValue(NOT_LOCKED,user.isNotlocked())
+                .addValue(NOT_LOCKED,user.isNotLocked())
                 .addValue(CREATE_TIME,user.getCreateTime())
                 .addValue(UPDATE_TIME,user.getUpdateTime())
                 .addValue(TRIAL,user.getTrial())

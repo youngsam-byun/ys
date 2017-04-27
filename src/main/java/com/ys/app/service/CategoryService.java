@@ -2,8 +2,10 @@ package com.ys.app.service;
 
 import com.ys.app.model.Category;
 import com.ys.app.util.UtilPagination;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
@@ -12,10 +14,10 @@ import java.util.Map;
  */
 public interface CategoryService {
 
-    boolean create(Category category, SecurityContext securityContext);
+    boolean create(Category category, Principal principal );
     Category read(Integer id);
-    boolean update(Category category,SecurityContext securityContext);
-    boolean delete(Integer id,SecurityContext securityContext);
+    boolean update(Category category,Principal  principal );
+    boolean delete(Integer id,Principal  principal );
 
     List<Category> getList(Integer pageNo, Integer pageSize);
     List<Category> getListBySearch(Integer pageNo,Integer pageSize, String keyword);

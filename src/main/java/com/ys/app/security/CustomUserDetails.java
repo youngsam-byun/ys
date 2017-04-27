@@ -4,13 +4,14 @@ import com.ys.app.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.security.Principal;
 import java.util.Collection;
 import java.util.HashSet;
 
 /**
  * Created by byun.ys on 4/20/2017.
  */
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails implements UserDetails, Principal {
 
     private User user;
     private Collection<? extends GrantedAuthority> authorities;
@@ -56,7 +57,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return user.isNotlocked();
+        return user.isNotLocked();
     }
 
     @Override
@@ -67,5 +68,10 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return user.isEnabled();
+    }
+
+    @Override
+    public String getName() {
+        return user.getUsername();
     }
 }

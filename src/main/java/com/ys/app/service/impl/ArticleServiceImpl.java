@@ -6,15 +6,16 @@ import com.ys.app.model.User;
 import com.ys.app.model.dto.ArticleDTO;
 import com.ys.app.repo.ArticleRepository;
 import com.ys.app.repo.UserRepository;
+import com.ys.app.security.CustomUserDetails;
 import com.ys.app.service.ArticleService;
 import com.ys.app.util.UtilPagination;
 import com.ys.app.util.UtilValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,14 +38,14 @@ public class ArticleServiceImpl implements ArticleService {
 
     private ArticleRepository articleRepository;
     private UserRepository userRepository;
-    private  Role role;
+    private Role role;
 
     @Autowired
     public ArticleServiceImpl(ArticleRepository articleRepository, UserRepository userRepository) {
 
         this.articleRepository = articleRepository;
         this.userRepository = userRepository;
-        role=Role.USER;
+        role = Role.USER;
     }
 
 
@@ -54,12 +55,12 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean writeArticle(Article article, SecurityContext securityContext) {
-        if (UtilValidation.isNull(article, securityContext))
+    public boolean writeArticle(Article article, Principal principal) {
+        if (UtilValidation.isNull(article, principal))
             throw new NullPointerException();
 
 
-        if (hasWritePermission(securityContext, role) == false)
+        if (hasWritePermission(principal, role) == false)
             throw new AccessDeniedException(NO_PERMISSION_TO_WRITE_ARTICLE);
 
         return articleRepository.create(article) >= 1;
@@ -87,22 +88,22 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean updateArticle(Article article, SecurityContext securityContext) {
-        if (UtilValidation.isNull(article, securityContext))
+    public boolean updateArticle(Article article, Principal principal) {
+        if (UtilValidation.isNull(article, principal))
             throw new NullPointerException();
 
-        if (hasUpdatePermission(securityContext, article) == false)
+        if (hasUpdatePermission(principal, article) == false)
             throw new AccessDeniedException(NO_PERMISSION_TO_UPDATE_ARTICLE);
 
         return articleRepository.update(article) == 1;
     }
 
     @Override
-    public boolean deleteArticle(Integer id, SecurityContext securityContext) {
+    public boolean deleteArticle(Integer id, Principal principal) {
         if (UtilValidation.isNull(id))
             throw new NullPointerException();
 
-        if (hasDeletePermission(securityContext, id) == false)
+        if (hasDeletePermission(principal, id) == false)
             throw new AccessDeniedException(NO_PERMISSION_TO_DELETE_ARTICLE);
 
         return articleRepository.delete(id) == 1;
@@ -153,19 +154,19 @@ public class ArticleServiceImpl implements ArticleService {
         return new UtilPagination(pageNo, total, pageSize);
     }
 
-    private boolean hasWritePermission(SecurityContext securityContext, Role role) {
-        User user = getUser(securityContext);
-        int roleId = user.getRoleid();
+    private boolean hasWritePermission(Principal principal, Role role) {
+        User user = getUser(principal);
+        int roleId = user.getRoleId();
         return roleId >= role.getId();
     }
 
-    private User getUser(SecurityContext securityContext) {
-        return (User) securityContext.getAuthentication().getDetails();
+    private User getUser(Principal principal) {
+        return ((CustomUserDetails) principal).getUser();
     }
 
-    private boolean hasUpdatePermission(SecurityContext securityContext, Article article) {
-        User user = getUser(securityContext);
-        int roleId = user.getRoleid();
+    private boolean hasUpdatePermission(Principal principal, Article article) {
+        User user = getUser(principal);
+        int roleId = user.getRoleId();
         int id = user.getId();
         int userId = article.getUserId();
 
@@ -173,9 +174,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     }
 
-    private boolean hasDeletePermission(SecurityContext securityContext, Integer articleId) {
-        User user = getUser(securityContext);
-        int roleId = user.getRoleid();
+    private boolean hasDeletePermission(Principal principal, Integer articleId) {
+        User user = getUser(principal);
+        int roleId = user.getRoleId();
         int id = user.getId();
 
         Article article = articleRepository.read(articleId);

@@ -4,6 +4,7 @@ import com.ys.app.model.Category;
 import com.ys.app.model.Role;
 import com.ys.app.model.User;
 import com.ys.app.repo.CategoryRepository;
+import com.ys.app.security.CustomUserDetails;
 import com.ys.app.service.CategoryService;
 import com.ys.app.util.UtilPagination;
 import com.ys.app.util.UtilValidation;
@@ -11,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,12 +45,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public boolean create(Category category, SecurityContext securityContext) {
+    public boolean create(Category category, Principal principal) {
 
-        if (UtilValidation.isNull(category, securityContext))
+        if (UtilValidation.isNull(category, principal))
             throw new NullPointerException();
 
-        if (hasPermission(securityContext, role) == false)
+        if (hasPermission(principal, role) == false)
             throw new AccessDeniedException(NO_PERMISSION_TO_CREATE_CATEGORY);
 
         String table = category.getName();
@@ -74,12 +75,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public boolean update(Category category, SecurityContext securityContext) {
+    public boolean update(Category category, Principal principal) {
 
-        if (UtilValidation.isNull(category, securityContext))
+        if (UtilValidation.isNull(category, principal))
             throw new NullPointerException();
 
-        if (hasPermission(securityContext, role) == false)
+        if (hasPermission(principal, role) == false)
             throw new AccessDeniedException(NO_PERMISSION_TO_UPDATE_CATEGORY);
 
         int categoryId = category.getId();
@@ -100,11 +101,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public boolean delete(Integer id, SecurityContext securityContext) {
-        if (UtilValidation.isNull(id, securityContext))
+    public boolean delete(Integer id, Principal principal) {
+        if (UtilValidation.isNull(id, principal))
             throw new NullPointerException();
 
-        if (hasPermission(securityContext, role) == false)
+        if (hasPermission(principal, role) == false)
             throw new AccessDeniedException(NO_PERMISSION_TO_DELETE_CATEGORY);
 
         Category category = categoryRepository.read(id);
@@ -167,15 +168,15 @@ public class CategoryServiceImpl implements CategoryService {
 
     }
 
-    private boolean hasPermission(SecurityContext securityContext, Role role) {
-        User user = getUser(securityContext);
-        int roleId = user.getRoleid();
+    private boolean hasPermission(Principal principal, Role role) {
+        User user = getUser(principal);
+        int roleId = user.getRoleId();
         return roleId >= role.getId();
     }
 
 
-    private User getUser(SecurityContext securityContext) {
-        return (User) securityContext.getAuthentication().getDetails();
+    private User getUser(Principal principal) {
+        return ((CustomUserDetails) principal).getUser();
     }
 
 }

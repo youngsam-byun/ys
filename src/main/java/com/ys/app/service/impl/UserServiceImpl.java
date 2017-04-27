@@ -3,15 +3,17 @@ package com.ys.app.service.impl;
 import com.ys.app.model.Role;
 import com.ys.app.model.User;
 import com.ys.app.repo.UserRepository;
+import com.ys.app.security.CustomUserDetails;
 import com.ys.app.service.UserService;
 import com.ys.app.util.UtilPagination;
 import com.ys.app.util.UtilValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 
@@ -25,34 +27,46 @@ public class UserServiceImpl implements UserService {
     @Value("${userService.updateUser.noPermission}")
     private static final String NO_PERMISSION_TO_UPDATE_USER = "userService.updateUser.noPermission";
 
-    @Value("${userService.creatrUser.noPermission}")
-    private final String NO_PERMISSION_TO_CREATE_USER="userService.createUser.noPermission";
+    @Value("${userService.createUser.noPermission}")
+    private final String NO_PERMISSION_TO_CREATE_USER = "userService.createUser.noPermission";
 
     private UserRepository userRepository;
-    private  Role role;
+    private Role role;
+
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        role=Role.OPERATION;
+        role = Role.OPERATION;
+        bCryptPasswordEncoder = new BCryptPasswordEncoder();
     }
 
     @Override
-    public boolean createUser(User user, SecurityContext securityContext) {
-        if(UtilValidation.isNull(user,securityContext))
+    public boolean createUser(User user, Principal principal) {
+        if (UtilValidation.isNull(user, principal))
             throw new NullPointerException();
 
-        if(hasCreatePermission(securityContext,role)==false)
+        if (hasCreatePermission(principal, role) == false)
             throw new AccessDeniedException(NO_PERMISSION_TO_CREATE_USER);
 
-        return userRepository.create(user)>=1;
 
+        String encoded = encodePassword(user);
+        user.setPassword(encoded);
+
+        return userRepository.create(user) >= 1;
+
+    }
+
+    private String encodePassword(User user) {
+        String password = user.getPassword();
+        return bCryptPasswordEncoder.encode(password);
     }
 
     @Override
     public User read(Integer id) {
 
-        if(UtilValidation.isNull(id))
+        if (UtilValidation.isNull(id))
             throw new NullPointerException();
 
         return userRepository.read(id);
@@ -61,51 +75,61 @@ public class UserServiceImpl implements UserService {
     @Override
     public User readByEmail(String email) {
 
-        if(UtilValidation.isNull(email))
+        if (UtilValidation.isNull(email))
             throw new NullPointerException();
 
         return userRepository.readByEmail(email);
     }
 
     @Override
-    public boolean updateUser(User user, SecurityContext securityContext) {
-        if(UtilValidation.isNull(user,securityContext))
-            throw new NullPointerException();
-
-        if(hasUpdatePermission(securityContext,role,user)==false)
-            throw new AccessDeniedException(NO_PERMISSION_TO_UPDATE_USER);
-
-        return userRepository.update(user)==1;
+    public User readByStr(String str) {
+        return  userRepository.readByStr(str);
     }
 
     @Override
-    public boolean updatePassword(User user, SecurityContext securityContext) {
-
-        if(UtilValidation.isNull(user,securityContext))
+    public boolean updateUser(User user, Principal principal) {
+        if (UtilValidation.isNull(user, principal))
             throw new NullPointerException();
 
-        if(hasUpdatePermission(securityContext,role,user)==false)
+        if (hasUpdatePermission(principal, role, user) == false)
             throw new AccessDeniedException(NO_PERMISSION_TO_UPDATE_USER);
 
+        String encoded = encodePassword(user);
+        user.setPassword(encoded);
 
-        return userRepository.updatePassword(user)==1;
+        return userRepository.update(user) == 1;
+    }
+
+    @Override
+    public boolean updatePassword(User user, Principal principal) {
+
+        if (UtilValidation.isNull(user, principal))
+            throw new NullPointerException();
+
+        if (hasUpdatePermission(principal, role, user) == false)
+            throw new AccessDeniedException(NO_PERMISSION_TO_UPDATE_USER);
+
+        String encoded = encodePassword(user);
+        user.setPassword(encoded);
+
+        return userRepository.updatePassword(user) == 1;
     }
 
     @Override
     public boolean updateTrialCountByOne(String email) {
-        return userRepository.updateTrialCountByOne(email,new Date())==1;
+        return userRepository.updateTrialCountByOne(email, new Date()) == 1;
     }
 
     @Override
-    public boolean deleteUser(Integer id, SecurityContext securityContext) {
+    public boolean deleteUser(Integer id, Principal principal) {
 
-        if(UtilValidation.isNull(id,securityContext))
+        if (UtilValidation.isNull(id, principal))
             throw new NullPointerException();
 
-        if(hasDeletePermission(securityContext,role,id)==false)
+        if (hasDeletePermission(principal, role, id) == false)
             throw new AccessDeniedException(NO_PERMISSION_TO_UPDATE_USER);
 
-        return userRepository.delete(id)==1;
+        return userRepository.delete(id) == 1;
 
 
     }
@@ -113,65 +137,67 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getList(Integer pageNo, Integer pageSize) {
 
-        if(UtilValidation.isNull(pageNo,pageSize))
+        if (UtilValidation.isNull(pageNo, pageSize))
             throw new NullPointerException();
 
-        return userRepository.getList(pageNo,pageSize);
+        return userRepository.getList(pageNo, pageSize);
     }
 
     @Override
     public List<User> getListBySearch(Integer pageNo, Integer pageSize, String keyword) {
 
-        if(UtilValidation.isNull(pageNo,pageSize,keyword))
+        if (UtilValidation.isNull(pageNo, pageSize, keyword))
             throw new NullPointerException();
 
-        return  userRepository.getListBySearch(pageNo,pageSize,keyword);
+        return userRepository.getListBySearch(pageNo, pageSize, keyword);
     }
 
     @Override
     public UtilPagination getPagination(Integer pageNo, Integer pageSize) {
 
-        if(UtilValidation.isNull(pageNo,pageSize))
+        if (UtilValidation.isNull(pageNo, pageSize))
             throw new NullPointerException();
 
-        int total=userRepository.getTotal();
-        return new UtilPagination(pageNo,total,pageSize);
+        int total = userRepository.getTotal();
+        return new UtilPagination(pageNo, total, pageSize);
     }
 
     @Override
     public UtilPagination getPaginationBySearch(Integer pageNo, Integer pageSize, String keyword) {
 
-        if(UtilValidation.isNull(pageNo,pageSize,keyword))
+        if (UtilValidation.isNull(pageNo, pageSize, keyword))
             throw new NullPointerException();
 
-        int total=userRepository.getTotalBySearch(keyword);
-        return new UtilPagination(pageNo,total,pageSize);
+        int total = userRepository.getTotalBySearch(keyword);
+        return new UtilPagination(pageNo, total, pageSize);
     }
 
-    private boolean hasCreatePermission(SecurityContext securityContext, Role role) {
-        User user = getUser(securityContext);
-        int roleId = user.getRoleid();
+    private boolean hasCreatePermission(Principal principal, Role role) {
+        User user = getUser(principal);
+        int roleId = user.getRoleId();
         return roleId >= role.getId();
     }
 
-    private boolean hasUpdatePermission(SecurityContext securityContext, Role role,User u) {
-        User user = getUser(securityContext);
-        int id=user.getId();
-        int roleId = user.getRoleid();
+    private boolean hasUpdatePermission(Principal principal, Role role, User u) {
+        User user = getUser(principal);
+        int id = user.getId();
+        int roleId = user.getRoleId();
 
-        int userId=u.getId();
+        int userId = u.getId();
 
-        return id==userId || roleId >= role.getId();
+        return id == userId || roleId >= role.getId();
     }
-    private boolean hasDeletePermission(SecurityContext securityContext, Role role, Integer userId) {
-        User user=getUser(securityContext);
-        int id=user.getId();
-        int roleId=user.getRoleid();
 
-        return id==userId || roleId>=role.getId();
+    private boolean hasDeletePermission(Principal principal, Role role, Integer userId) {
+        User user = getUser(principal);
+        int id = user.getId();
+        int roleId = user.getRoleId();
+
+        return id == userId || roleId >= role.getId();
     }
-    private User getUser(SecurityContext securityContext) {
-        return (User) securityContext.getAuthentication().getDetails();
+
+    private User getUser(Principal principal) {
+        return ((CustomUserDetails) principal).getUser();
     }
 
 

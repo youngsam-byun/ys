@@ -1,6 +1,5 @@
 package com.ys.app.repo;
 
-import com.ys.app.model.Article;
 import com.ys.app.model.Comment;
 
 import java.util.List;

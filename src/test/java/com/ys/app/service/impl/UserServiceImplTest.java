@@ -2,7 +2,7 @@ package com.ys.app.service.impl;
 
 import com.ys.app.model.User;
 import com.ys.app.repo.UserRepository;
-import com.ys.app.security.UtilSecurityContextTest;
+import com.ys.app.security.util.UtilSecurityContextTest;
 import com.ys.app.service.UserService;
 import com.ys.app.util.TestDoubles;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
@@ -12,17 +12,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.Authentication;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.ys.app.security.UtilSecurityContextTest.returnSecurityContext;
+import static com.ys.app.security.util.UtilSecurityContextTest.returnAuthentication;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 
+/**
 /**
  * Created by byun.ys on 4/13/2017.
  */
@@ -57,16 +58,17 @@ public class UserServiceImplTest {
     public void B_createUser_throwAccessDeniedException() {
 
         User actual = new User();
-        SecurityContext securityContext = returnSecurityContext(new User(),1);
-        userService.createUser(actual, securityContext);
+        Authentication authentication = returnAuthentication(new User(),1);
+        userService.createUser(actual, authentication);
         verifyNoMoreInteractions(userRepository);
     }
 
     @Test
     public void C_createUser_returnTrue() {
         User actual = new User();
-        SecurityContext securityContext = returnSecurityContext(new User(),9);
-        userService.createUser(actual, securityContext);
+        actual.setPassword("password");
+        Authentication authentication = returnAuthentication(new User(),9);
+        userService.createUser(actual, authentication);
         verify(userRepository,times(1)).create(actual);
         verifyNoMoreInteractions(userRepository);
     }
@@ -99,7 +101,7 @@ public class UserServiceImplTest {
 
         User user2=new User();
         user2.setId(0);
-        userService.updateUser(user,UtilSecurityContextTest.returnSecurityContext(user2,0));
+        userService.updateUser(user,UtilSecurityContextTest.returnAuthentication(user2,0));
 
         verifyNoMoreInteractions(userRepository);
     }
@@ -117,7 +119,7 @@ public class UserServiceImplTest {
 
         User user2=new User();
         user2.setId(0);
-        userService.updatePassword(user,UtilSecurityContextTest.returnSecurityContext(user2,0));
+        userService.updatePassword(user,UtilSecurityContextTest.returnAuthentication(user2,0));
 
         verifyNoMoreInteractions(userRepository);
     }
@@ -135,7 +137,7 @@ public class UserServiceImplTest {
 
         User user2=new User();
         user2.setId(0);
-        userService.deleteUser(9,UtilSecurityContextTest.returnSecurityContext(user2,0));
+        userService.deleteUser(9,UtilSecurityContextTest.returnAuthentication(user2,0));
 
         verifyNoMoreInteractions(userRepository);
     }
@@ -175,11 +177,13 @@ public class UserServiceImplTest {
 
             mockedUser = createUser();
 
+
         }
 
         private User createUser() {
             User user = new User();
             user.setId(2);
+            user.setPassword("password");
 
             return user;
         }
@@ -189,7 +193,7 @@ public class UserServiceImplTest {
 
             when(userRepository.create(mockedUser)).thenReturn(1);
 
-            assertThat(userService.createUser(mockedUser, UtilSecurityContextTest.returnSecurityContext(mockedUser,9))).isTrue();
+            assertThat(userService.createUser(mockedUser, UtilSecurityContextTest.returnAuthentication(mockedUser,9))).isTrue();
             verify(userRepository,times(1)).create(mockedUser);
             verifyNoMoreInteractions(userRepository);
         }
@@ -218,7 +222,7 @@ public class UserServiceImplTest {
 
             when(userRepository.update(mockedUser)).thenReturn(1);
 
-            assertThat(userService.updateUser(mockedUser,UtilSecurityContextTest.returnSecurityContext(mockedUser,9))).isTrue();
+            assertThat(userService.updateUser(mockedUser,UtilSecurityContextTest.returnAuthentication(mockedUser,9))).isTrue();
             verify(userRepository,times(1)).update(mockedUser);
             verifyNoMoreInteractions(userRepository);
         }
@@ -227,7 +231,7 @@ public class UserServiceImplTest {
 
             when(userRepository.updatePassword(mockedUser)).thenReturn(1);
 
-            assertThat(userService.updatePassword(mockedUser,UtilSecurityContextTest.returnSecurityContext(mockedUser,9))).isTrue();
+            assertThat(userService.updatePassword(mockedUser,UtilSecurityContextTest.returnAuthentication(mockedUser,9))).isTrue();
             verify(userRepository,times(1)).updatePassword(mockedUser);
             verifyNoMoreInteractions(userRepository);
         }
@@ -244,7 +248,7 @@ public class UserServiceImplTest {
         public  void F_deleteUser_returnTrue() {
 
             when(userRepository.delete(1)).thenReturn(1);
-            assertThat(userService.deleteUser(1,UtilSecurityContextTest.returnSecurityContext(mockedUser,9))).isTrue();
+            assertThat(userService.deleteUser(1,UtilSecurityContextTest.returnAuthentication(mockedUser,9))).isTrue();
             verify(userRepository,times(1)).delete(1);
             verifyNoMoreInteractions(userRepository);
         }

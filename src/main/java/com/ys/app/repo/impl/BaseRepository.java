@@ -38,6 +38,7 @@ public abstract class BaseRepository<T> {
     protected BaseRowMapper<T> baseRowMapper;
 
     private SimpleJdbcCall simpleJdbcCall;
+    private String storedProcedure;
 
     protected void setTable(String table) {
         this.table = table;
@@ -45,12 +46,11 @@ public abstract class BaseRepository<T> {
 
     protected final int create(String storedProcedure, T t) {
         SqlParameterSource sqlParameterSource = baseRowMapper.createParameterSource(t).addValue(TABLE, table);
-        return executeObject(storedProcedure, sqlParameterSource);
+        return executeForInt(storedProcedure, sqlParameterSource);
     }
 
     protected final T readbyId(int id) {
-        Map<String, Object> hashMap;
-        String storedProcedure = G_READ_BY_ID;
+        storedProcedure = G_READ_BY_ID;
         try {
 
             SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>("id", id));
@@ -62,8 +62,8 @@ public abstract class BaseRepository<T> {
     }
 
     protected final T readByColumn(String columnName, String value) {
-        Map<String, Object> hashMap;
-        String storedProcedure = G_READ_BY_COLUMN;
+
+        storedProcedure = G_READ_BY_COLUMN;
         try {
             SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>(COLUMN_NAME, columnName), new SimpleEntry<>(COLUMN_VALUE, value));
             return execute(storedProcedure, sqlParameterSource);
@@ -71,6 +71,17 @@ public abstract class BaseRepository<T> {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    protected  final T readSimple(String procedureName, SimpleEntry<String, Object>... requiredParameters){
+        try {
+            SqlParameterSource sqlParameterSource = createParameters(requiredParameters);
+            return execute(procedureName, sqlParameterSource);
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
     }
 
     protected final void executeSimple(String procedureName, SimpleEntry<String, Object>... requiredParameters) {
@@ -86,27 +97,27 @@ public abstract class BaseRepository<T> {
 
     protected final int executeStoredProcedureForObject(String procedureName, SimpleEntry<String, Object>... requiredParameters) {
         SqlParameterSource sqlParameterSource = createParameters(requiredParameters);
-        return  executeObject(procedureName, sqlParameterSource);
+        return  executeForInt(procedureName, sqlParameterSource);
     }
 
     protected final int update(String storedProcedure, T t) {
         SqlParameterSource sqlParameterSource = baseRowMapper.updateParameterSource(t).addValue(TABLE, table);
-        return executeObject(storedProcedure, sqlParameterSource);
+        return executeForInt(storedProcedure, sqlParameterSource);
     }
 
     protected final int deleteById(int id) {
         SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>(ID, id));
-        return executeObject(G_DELETE_BY_ID, sqlParameterSource);
+        return executeForInt(G_DELETE_BY_ID, sqlParameterSource);
     }
 
     protected final int deleteByUpdateId(int id) {
         SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>(ID, id));
-        return executeObject(G_DELETE_BY_UPDATE_ID, sqlParameterSource);
+        return executeForInt(G_DELETE_BY_UPDATE_ID, sqlParameterSource);
     }
 
     protected final int deleteBySearch(String keyword) {
         SqlParameterSource sqlParameterSource = createParameters(new SimpleEntry<>(KEYWORD, keyword));
-        return executeObject(G_DELETE_BY_KEY_WORD, sqlParameterSource);
+        return executeForInt(G_DELETE_BY_KEY_WORD, sqlParameterSource);
     }
 
 
@@ -135,7 +146,7 @@ public abstract class BaseRepository<T> {
 
         try {
             SqlParameterSource sqlParameterSource = createParameters(requiredParameters);
-            return executeObject(storedProcedure, sqlParameterSource);
+            return executeForInt(storedProcedure, sqlParameterSource);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             throw e;
@@ -195,7 +206,7 @@ public abstract class BaseRepository<T> {
             return null;
     }
 
-    private int executeObject(String storedProcedure, SqlParameterSource sqlParameterSource) {
+    private int executeForInt(String storedProcedure, SqlParameterSource sqlParameterSource) {
         simpleJdbcCall= new SimpleJdbcCall(dataSource).withProcedureName(storedProcedure);
         return simpleJdbcCall.executeObject(int.class, sqlParameterSource);
     }

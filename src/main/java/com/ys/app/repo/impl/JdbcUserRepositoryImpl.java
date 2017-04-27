@@ -33,6 +33,8 @@ public class JdbcUserRepositoryImpl extends BaseRepository<User> implements User
     private static final String GET_LIST_BY_SEARCH = "G_getListBySearch";
     private static final String EMAIL = "email";
     private static final String UPDATE_TIME = "updateTime";
+    private static final String USER_READ_BY_EMAIL = "User_readByEmail";
+    private static final String STR = "str";
 
     @Autowired
     public JdbcUserRepositoryImpl(DataSource dataSource) {
@@ -53,7 +55,12 @@ public class JdbcUserRepositoryImpl extends BaseRepository<User> implements User
 
     @Override
     public User readByEmail(String email) {
-        return super.readByColumn(EMAIL,email);
+        return super.readSimple(USER_READ_BY_EMAIL,new SimpleEntry<>(EMAIL,email));
+    }
+
+    @Override
+    public User readByStr(String str) {
+        return  super.readByColumn(STR,str);
     }
 
     @Override

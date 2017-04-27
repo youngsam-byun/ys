@@ -15,6 +15,8 @@ public interface UserRepository {
 
     User readByEmail(String email);
 
+    User readByStr(String str);
+
     int update(User user);
 
     int updatePassword(User user);

@@ -1,7 +1,6 @@
 package com.ys.app.repo.impl;
 
 
-import com.ys.app.model.Article;
 import com.ys.app.model.Comment;
 import com.ys.app.repo.CommentRepository;
 import org.junit.Before;

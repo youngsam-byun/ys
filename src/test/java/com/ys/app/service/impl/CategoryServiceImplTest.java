@@ -4,7 +4,7 @@ import com.sun.javaws.exceptions.InvalidArgumentException;
 import com.ys.app.model.Category;
 import com.ys.app.model.User;
 import com.ys.app.repo.CategoryRepository;
-import com.ys.app.security.UtilSecurityContextTest;
+import com.ys.app.security.util.UtilSecurityContextTest;
 import com.ys.app.service.CategoryService;
 import com.ys.app.util.TestDoubles;
 import com.ys.app.util.UtilPagination;
@@ -50,7 +50,7 @@ public class CategoryServiceImplTest {
     @Test(expected = AccessDeniedException.class)
     public void B_create_throwAccessDeniedException(){
         Category c= new Category();
-        categoryService.create(c, UtilSecurityContextTest.returnSecurityContext(new User(),0));
+        categoryService.create(c, UtilSecurityContextTest.returnAuthentication(new User(),0));
         verify(categoryRepository,times(0)).create(c);
         Mockito.verifyNoMoreInteractions(categoryRepository);
     }
@@ -59,7 +59,7 @@ public class CategoryServiceImplTest {
     public void C_createTable_throwNullPointerException(){
 
         Category c= new Category();
-        categoryService.create(c, UtilSecurityContextTest.returnSecurityContext(new User(),0));
+        categoryService.create(c, UtilSecurityContextTest.returnAuthentication(new User(),0));
 
         verify(categoryRepository,times(0)).create(c);
         Mockito.verifyNoMoreInteractions(categoryRepository);
@@ -82,7 +82,7 @@ public class CategoryServiceImplTest {
 
     @Test(expected = AccessDeniedException.class)
     public void E_update_throwAccessDeniedException(){
-        categoryService.update(new Category(),UtilSecurityContextTest.returnSecurityContext(new User(),0));
+        categoryService.update(new Category(),UtilSecurityContextTest.returnAuthentication(new User(),0));
         verify(categoryRepository,times(0)).update(new Category());
         verifyNoMoreInteractions(categoryRepository);
     }
@@ -96,7 +96,7 @@ public class CategoryServiceImplTest {
 
     @Test(expected = AccessDeniedException.class)
     public void E2_delete_throwAccessDeniedException(){
-        categoryService.delete(1,UtilSecurityContextTest.returnSecurityContext(new User(),0));
+        categoryService.delete(1,UtilSecurityContextTest.returnAuthentication(new User(),0));
         verify(categoryRepository,times(0)).delete(0);
         verifyNoMoreInteractions(categoryRepository);
     }
@@ -157,7 +157,7 @@ public class CategoryServiceImplTest {
             when(categoryRepository.create(created)).thenReturn(1);
 
 
-            boolean b=categoryService.create(created,UtilSecurityContextTest.returnSecurityContext(new User(),9));
+            boolean b=categoryService.create(created,UtilSecurityContextTest.returnAuthentication(new User(),9));
             assertThat(b).isTrue();
             verify(categoryRepository,times(1)).createTable(created.getName());
             verify(categoryRepository,times(1)).create(created);
@@ -183,7 +183,7 @@ public class CategoryServiceImplTest {
             when(categoryRepository.update(created)).thenReturn(1);
             when(categoryRepository.read(1)).thenReturn(c);
 
-            boolean returned=categoryService.update(created,UtilSecurityContextTest.returnSecurityContext(new User(),9));
+            boolean returned=categoryService.update(created,UtilSecurityContextTest.returnAuthentication(new User(),9));
             assertThat(returned).isEqualTo(true);
             verify(categoryRepository,times(1)).read(1);
             verify(categoryRepository,times(1)).renameTable(c.getName(),created.getName());
@@ -198,7 +198,7 @@ public class CategoryServiceImplTest {
             when(categoryRepository.read(1)).thenReturn(created);
             when(categoryRepository.delete(1)).thenReturn(1);
 
-            categoryService.delete(1,UtilSecurityContextTest.returnSecurityContext(new User(),9));
+            categoryService.delete(1,UtilSecurityContextTest.returnAuthentication(new User(),9));
 
             verify(categoryRepository,times(1)).read(1);
             verify(categoryRepository,times(1)).dropTable(created.getName());
