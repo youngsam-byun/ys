@@ -17,6 +17,7 @@ import java.util.List;
 @Repository
 public class JdbcCommentRepositoryImpl extends BaseRepository<Comment> implements CommentRepository {
 
+    public static final String PREFIX = "C_";
 
     private static final String TABLE_NAME = "Comment";
     private static final String COMMENT_INS = "Comment_INS";
@@ -27,7 +28,10 @@ public class JdbcCommentRepositoryImpl extends BaseRepository<Comment> implement
     private static final String G_GET_TOTAL = "G_getTotal";
     private static final String ID = "id";
     private static final String COMMENT_READ = "Comment_READ";
-    public static final String PREFIX = "C_";
+
+    private static final String G_GET_TOTAL_BY_SEARCH = "G_getTotalBySearch";
+    private static final String KEYWORD="keyword";
+    public static final String G_GET_LIST_BY_SEARCH = "G_getListBySearch";
 
 
     @Autowired
@@ -73,6 +77,17 @@ public class JdbcCommentRepositoryImpl extends BaseRepository<Comment> implement
         return super.getTotal(G_GET_TOTAL);
     }
 
+    @Override
+    public int getTotalBySearch(String keyword) {
+        return super.getTotal(G_GET_TOTAL_BY_SEARCH,new SimpleEntry<>(KEYWORD,keyword));
+    }
+
+    @Override
+    public List<Comment> getListBySearch(int pageNo, int pageSize, String keyword) {
+        return super.getList(G_GET_LIST_BY_SEARCH, new SimpleEntry<>(PAGE_NO, pageNo),
+                new SimpleEntry<>(PAGE_SIZE, pageSize),
+                new SimpleEntry<>(KEYWORD, keyword));
+    }
 
 
 }

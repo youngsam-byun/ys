@@ -12,7 +12,7 @@ import javax.validation.ConstraintValidatorContext;
 @Component
 public class IsUniqueValidator implements ConstraintValidator<IsUnique, String> {
 
-	private final String userPrefix = "user_";
+	private static final String userPrefix = "user_";
 
 	private String fieldName;
 

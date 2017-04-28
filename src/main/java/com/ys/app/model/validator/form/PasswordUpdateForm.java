@@ -1,9 +1,5 @@
 package com.ys.app.model.validator.form;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.Valid;
-
 /**
  * Created by byun.ys on 4/27/2017.
  */

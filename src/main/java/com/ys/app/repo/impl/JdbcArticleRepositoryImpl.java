@@ -18,6 +18,8 @@ import java.util.List;
 public class JdbcArticleRepositoryImpl extends BaseRepository<Article> implements ArticleRepository {
 
 
+    public static final String PREFIX = "A_";
+
     private static final String TABLE_NAME = "Article";
     private static final String ARTICLE_INS = "Article_INS";
     private static final String ARTICLE_UPD = "Article_UPD";
@@ -30,7 +32,7 @@ public class JdbcArticleRepositoryImpl extends BaseRepository<Article> implement
     private static final String G_GET_TOTAL_BY_SEARCH = "G_getTotalBySearch";
     private static final String ID = "id";
     private static final String ARTICLE_READ = "Article_READ";
-    public static final String PREFIX = "A_";
+
 
 
     @Autowired

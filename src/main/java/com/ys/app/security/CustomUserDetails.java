@@ -17,7 +17,7 @@ public class CustomUserDetails implements UserDetails, Principal {
     private Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(User user, Collection<? extends GrantedAuthority> authorities) {
-        authorities = new HashSet<GrantedAuthority>();
+        authorities = new HashSet<>();
 
         this.user = user;
         this.authorities = authorities;

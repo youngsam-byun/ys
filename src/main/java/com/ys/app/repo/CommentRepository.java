@@ -24,5 +24,9 @@ public interface CommentRepository {
 
     int getTotal();
 
+    int getTotalBySearch(String keyword);
+
+    List<Comment> getListBySearch(int pageNo, int pageSize, String keyword);
+
 
 }

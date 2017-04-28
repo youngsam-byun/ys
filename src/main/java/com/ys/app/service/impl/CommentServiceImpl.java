@@ -55,7 +55,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public boolean writeComment(Comment comment, Principal principal) {
+    public boolean create(Comment comment, Principal principal) {
         if (UtilValidation.isNull(comment, principal))
             throw new NullPointerException();
 
@@ -67,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO readComment(Integer id) {
+    public CommentDTO read(Integer id) {
         if (UtilValidation.isNull(id))
             throw new NullPointerException();
 
@@ -88,7 +88,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public boolean updateComment(Comment comment, Principal principal) {
+    public boolean update(Comment comment, Principal principal) {
         if (UtilValidation.isNull(comment, principal))
             throw new NullPointerException();
 
@@ -99,8 +99,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public boolean deleteComment(Integer id, Principal principal) {
-        if (UtilValidation.isNull(id))
+    public boolean delete(Integer id, Principal principal) {
+        if (UtilValidation.isNull(id,principal))
             throw new NullPointerException();
 
         if (hasDeletePermission(principal, id) == false)
@@ -125,12 +125,34 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public UtilPagination getPagination(Integer pageNo, Integer pageSize) {
-        if (UtilValidation.isNull(pageNo))
+        if (UtilValidation.isNull(pageNo,pageSize))
             throw new NullPointerException();
 
 
         int total = commentRepository.getTotal();
         return new UtilPagination(pageNo, total, pageSize);
+    }
+
+    @Override
+    public UtilPagination getPaginationBySearch(Integer pageNo, Integer pageSize, String keyword) {
+        if (UtilValidation.isNull(pageNo,pageSize,keyword))
+            throw new NullPointerException();
+
+        int total=commentRepository.getTotalBySearch(keyword);
+
+        return new UtilPagination(pageNo,total,pageSize);
+    }
+
+    @Override
+    public List<CommentDTO> getListBySearch(Integer pageNo, Integer pageSize, String keyword) {
+        if (UtilValidation.isNull(pageNo,pageSize,keyword))
+            throw new NullPointerException();
+
+
+        List<Comment> commentList= commentRepository.getListBySearch(pageNo,pageSize,keyword);
+
+        return getCommentDTOList(commentList);
+
     }
 
     private boolean hasWritePermission(Principal principal, Role role) {
@@ -143,7 +165,7 @@ public class CommentServiceImpl implements CommentService {
         return ((CustomUserDetails) principal).getUser();
     }
 
-    private boolean hasUpdatePermission(Principal principal, Comment comment) {
+    public boolean hasUpdatePermission(Principal principal, Comment comment) {
         User user = getUser(principal);
         int roleId = user.getRoleId();
         int id = user.getId();

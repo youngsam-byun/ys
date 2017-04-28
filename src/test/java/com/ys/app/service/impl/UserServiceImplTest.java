@@ -49,7 +49,7 @@ public class UserServiceImplTest {
     @Test(expected = NullPointerException.class)
     public void A_createUser_throwNullPointerException() {
 
-        userService.createUser(null, null);
+        userService.create(null, null);
         verifyNoMoreInteractions(userRepository);
 
     }
@@ -59,7 +59,7 @@ public class UserServiceImplTest {
 
         User actual = new User();
         Authentication authentication = returnAuthentication(new User(),1);
-        userService.createUser(actual, authentication);
+        userService.create(actual, authentication);
         verifyNoMoreInteractions(userRepository);
     }
 
@@ -68,7 +68,7 @@ public class UserServiceImplTest {
         User actual = new User();
         actual.setPassword("password");
         Authentication authentication = returnAuthentication(new User(),9);
-        userService.createUser(actual, authentication);
+        userService.create(actual, authentication);
         verify(userRepository,times(1)).create(actual);
         verifyNoMoreInteractions(userRepository);
     }
@@ -90,7 +90,7 @@ public class UserServiceImplTest {
 
     @Test(expected = NullPointerException.class)
     public  void E_updateUser_throwNullPointerException() {
-        userService.updateUser(null,null);
+        userService.update(null,null);
         verifyNoMoreInteractions(userRepository);
     }
 
@@ -101,7 +101,7 @@ public class UserServiceImplTest {
 
         User user2=new User();
         user2.setId(0);
-        userService.updateUser(user,UtilSecurityContextTest.returnAuthentication(user2,0));
+        userService.update(user,UtilSecurityContextTest.returnAuthentication(user2,0));
 
         verifyNoMoreInteractions(userRepository);
     }
@@ -193,7 +193,7 @@ public class UserServiceImplTest {
 
             when(userRepository.create(mockedUser)).thenReturn(1);
 
-            assertThat(userService.createUser(mockedUser, UtilSecurityContextTest.returnAuthentication(mockedUser,9))).isTrue();
+            assertThat(userService.create(mockedUser, UtilSecurityContextTest.returnAuthentication(mockedUser,9))).isTrue();
             verify(userRepository,times(1)).create(mockedUser);
             verifyNoMoreInteractions(userRepository);
         }
@@ -222,7 +222,7 @@ public class UserServiceImplTest {
 
             when(userRepository.update(mockedUser)).thenReturn(1);
 
-            assertThat(userService.updateUser(mockedUser,UtilSecurityContextTest.returnAuthentication(mockedUser,9))).isTrue();
+            assertThat(userService.update(mockedUser,UtilSecurityContextTest.returnAuthentication(mockedUser,9))).isTrue();
             verify(userRepository,times(1)).update(mockedUser);
             verifyNoMoreInteractions(userRepository);
         }

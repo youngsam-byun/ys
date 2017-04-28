@@ -17,8 +17,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +62,7 @@ public class ArticleServiceImplTest {
         long limit=MILLISECONDS.convert(60,MINUTES);
         System.out.println(limit);
 
-        articleService.writeArticle(null, null);
+        articleService.create(null, null);
         verify(articleRepository,times(0)).create(null);
         verifyNoMoreInteractions(articleRepository);
 
@@ -75,14 +73,14 @@ public class ArticleServiceImplTest {
 
         Article actual = new Article();
         Authentication authentication = returnAuthentication(new User(),0);
-        articleService.writeArticle(actual, authentication);
+        articleService.create(actual, authentication);
         verify(articleRepository,times(0)).create(null);
         verifyNoMoreInteractions(articleRepository);
     }
 
     @Test(expected = NullPointerException.class)
     public  void C_readArticle_throwNullPointerException() {
-        articleService.readArticle(null);
+        articleService.read(null);
         verify(articleRepository,times(0)).read(0);
         verifyNoMoreInteractions(articleRepository);
     }
@@ -91,7 +89,7 @@ public class ArticleServiceImplTest {
     @Test(expected = NullPointerException.class)
     public void D_updateArticle_shouldThrowNullPointerException() {
 
-        articleService.updateArticle(null, null);
+        articleService.update(null, null);
         verify(articleRepository,times(0)).update(null);
         verifyNoMoreInteractions(articleRepository);
 
@@ -104,7 +102,7 @@ public class ArticleServiceImplTest {
         user.setId(1);
         Article actual = new Article();
         Authentication authentication = returnAuthentication(user,0);
-        articleService.updateArticle(actual, authentication);
+        articleService.update(actual, authentication);
         verify(articleRepository,times(0)).update(null);
         verifyNoMoreInteractions(articleRepository);
     }
@@ -113,7 +111,7 @@ public class ArticleServiceImplTest {
     @Test(expected = NullPointerException.class)
     public void G_deleteArticle_throwNullPointerException(){
 
-        articleService.deleteArticle(null,null);
+        articleService.delete(null,null);
         verify(articleRepository,times(0)).delete(0);
         verifyNoMoreInteractions(articleRepository);
     }
@@ -169,7 +167,7 @@ public class ArticleServiceImplTest {
             when(articleRepository.create(mockedArticle)).thenReturn(1);
 
             Authentication authentication = returnAuthentication(new User(),1);
-            boolean b = articleService.writeArticle(mockedArticle, authentication);
+            boolean b = articleService.create(mockedArticle, authentication);
             assertThat(b).isTrue();
             verify(articleRepository,times(1)).create(mockedArticle);
             verifyNoMoreInteractions(articleRepository);
@@ -179,7 +177,7 @@ public class ArticleServiceImplTest {
         public  void B_readArticle_returnArticle() {
             when(articleRepository.read(1)).thenReturn(mockedArticle);
 
-            ArticleDTO articleDTO= articleService.readArticle(1);
+            ArticleDTO articleDTO= articleService.read(1);
             Article actual=articleDTO.getArticle();
             assertThat(actual).isEqualTo(mockedArticle);
             verify(articleRepository,times(1)).read(1);
@@ -191,7 +189,7 @@ public class ArticleServiceImplTest {
             when(articleRepository.update(mockedArticle)).thenReturn(1);
 
             Authentication authentication= returnAuthentication(new User(),9);
-            boolean actual= articleService.updateArticle(mockedArticle,authentication);
+            boolean actual= articleService.update(mockedArticle,authentication);
             assertThat(actual).isEqualTo(true);
             verify(articleRepository,times(1)).update(mockedArticle);
             verifyNoMoreInteractions(articleRepository);
@@ -207,7 +205,7 @@ public class ArticleServiceImplTest {
             User user=new User();
             user.setId(1);
             Authentication authentication= returnAuthentication(user,9);
-            boolean b= articleService.deleteArticle(1,authentication);
+            boolean b= articleService.delete(1,authentication);
             assertThat(b).isTrue();
             verify(articleRepository,times(1)).read(1);
             verify(articleRepository,times(1)).delete(1);

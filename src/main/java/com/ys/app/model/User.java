@@ -1,7 +1,5 @@
 package com.ys.app.model;
 
-import com.ys.app.model.validator.FieldMatch;
-import com.ys.app.model.validator.IsUnique;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;

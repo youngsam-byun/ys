@@ -27,5 +27,4 @@ public interface ArticleRepository {
     int getTotal();
 
     int getTotalBySearch(String keyword);
-
 }

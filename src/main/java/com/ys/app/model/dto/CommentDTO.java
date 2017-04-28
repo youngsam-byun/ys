@@ -8,6 +8,7 @@ import com.ys.app.model.User;
  */
 public class CommentDTO {
 
+
     private Comment comment;
     private User user;
 

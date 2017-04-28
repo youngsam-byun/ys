@@ -59,10 +59,10 @@ public class PasswordUpdateFormValidator implements Validator {
         ValidationUtils.rejectIfEmpty(errors, "passwordConfirm", PASSWORD_UPDATE_VALIDATOR_PASSWORD_CONFIRM_EMPTY);
 
         if (matchWithCurrentPassword(oldPassword) == false)
-            ValidationUtils.rejectIfEmpty(errors, "oldPassword", OLD_PASSWORD_PASSWORD_IS_WRONG);
+            errors.rejectValue("oldPassword", OLD_PASSWORD_PASSWORD_IS_WRONG);
 
         if (password.equals(passwordConfirm) == false)
-            ValidationUtils.rejectIfEmpty(errors, "passwordConfirm", PASSWORD_AND_PASSWORD_CONFIRM_DO_NOT_MATCH);
+            errors.rejectValue("passwordConfirm", PASSWORD_AND_PASSWORD_CONFIRM_DO_NOT_MATCH);
 
     }
 }

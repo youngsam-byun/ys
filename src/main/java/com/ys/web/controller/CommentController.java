@@ -1,11 +1,11 @@
 package com.ys.web.controller;
 
 import com.ys.app.exception.CustomException;
-import com.ys.app.model.Article;
-import com.ys.app.model.dto.ArticleDTO;
+import com.ys.app.model.Comment;
+import com.ys.app.model.dto.CommentDTO;
 import com.ys.app.model.validator.form.SearchForm;
-import com.ys.app.service.ArticleService;
-import com.ys.app.service.impl.ArticleServiceImpl;
+import com.ys.app.service.CommentService;
+import com.ys.app.service.impl.CommentServiceImpl;
 import com.ys.app.util.UtilPagination;
 import com.ys.app.util.UtilValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,64 +27,60 @@ import java.util.List;
  * Created by byun.ys on 4/18/2017.
  */
 @Controller
-@RequestMapping("/article")
-public class ArticleController {
+@RequestMapping("/comment")
+public class CommentController {
 
-    private static final String FOLDER="/article";
-    private static final String PAGE_LIST = "/article_list.jsp";
-    private static final String PAGE_READ = "/article_read.jsp";
-    private static final String PAGE_WRITE = "/article_write.jsp";
-    private static final String PAGE_SEARCH = "article_search.jsp";
+    private static final String FOLDER="/comment";
+    private static final String PAGE_LIST = "/comment_list.jsp";
+    private static final String PAGE_READ = "/comment_read.jsp";
+    private static final String PAGE_WRITE = "/comment_write.jsp";
+    private static final String PAGE_SEARCH = "comment_search.jsp";
 
     private static final String PAGINATION = "pagination";
-    private static final String ARTICLE_DTO_LIST= "articleDTOList";
-    private static final String ARTICLE_DTO = "articleDTO";
+    private static final String COMMENT_DTO_LIST= "commentDTOList";
+    private static final String COMMENT_DTO = "commentDTO";
     private static final String READ = "read";
     private static final String WRITE = "write";
     private static final String DELETE = "delete";
     private static final String LIST = "list";
-    private static final String REDIRECT_ARTICLE_LIST_1 = "redirect:/article/list/1";
+    private static final String REDIRECT_COMMENT_LIST_1 = "redirect:/comment/list/1";
     private static final String UPDATE = "update";
-    private static final String ARTICLE_UPDATE_JSP = "/article_update.jsp";
-    private static final String NO_PERMISSION_TO_ACCESS_THIS_ARTICLE = "No permission to access this article";
+    private static final String COMMENT_UPDATE_JSP = "/comment_update.jsp";
+    private static final String NO_PERMISSION_TO_ACCESS_THIS_COMMENT = "No permission to access this comment";
 
-    private static final String PAGE_ARTICLE_UPDATE = "/article/update.jsp";
-
-
-    @Value("${articleController.read.empty}")
-    private final String ARTICLECONTROLLER_READ_EMPTY = "articleController.read.empty";
-
-    @Value("${articleController.delete.fail}")
-    private final String  ARTICLECONTROLLER_DELETE_FAIL= "articleController.delete.fail";
-
-    @Value("${articleController.write.fail}")
-    private final String ARTICLECONTROLLER_WRITE_FAIL ="articleController.write.fail" ;
-
-    @Value("${articleController.update.fail}")
-    private static final String UPDATE_ARTICLE_FAILED = "Update article failed";
-
-    @Value("${articleController.id.notNegative}")
-    private static final String ID_SHOULD_NOT_BE_NEGATIVE_VALUE = "articleController.id.notNegative";
-
-    @Value("${articleController.keyword.notEmpty}")
-    private String SEARCH_KEYWORD_SHOULD_NOT_BE_EMPTY="articleController.keyword.notEmpty";
+    private static final String PAGE_COMMENT_UPDATE = "/comment/update.jsp";
 
 
-    @Value("${articleController.pageNo.notNegative}")
-    private static final String PAGENO_SHOULD_NOT_BE_NEGATIVE_VALUE = "articleController.pageNo.notNegative";
+    @Value("${commentController.read.empty}")
+    private final String COMMENTCONTROLLER_READ_EMPTY = "commentController.read.empty";
+
+    @Value("${commentController.delete.fail}")
+    private final String  COMMENTCONTROLLER_DELETE_FAIL= "commentController.delete.fail";
+
+    @Value("${commentController.write.fail}")
+    private final String COMMENTCONTROLLER_WRITE_FAIL ="commentController.write.fail" ;
+
+    @Value("${commentController.update.fail}")
+    private static final String UPDATE_COMMENT_FAILED = "Update comment failed";
+
+    @Value("${commentController.id.notNegative}")
+    private static final String ID_SHOULD_NOT_BE_NEGATIVE_VALUE = "commentController.id.notNegative";
+
+    @Value("${commentController.keyword.notEmpty}")
+    private String SEARCH_KEYWORD_SHOULD_NOT_BE_EMPTY="commentController.keyword.notEmpty";
 
 
-
-
+    @Value("${commentController.pageNo.notNegative}")
+    private static final String PAGENO_SHOULD_NOT_BE_NEGATIVE_VALUE = "commentController.pageNo.notNegative";
 
     @Value("${page.size?:10}")
     private Integer pageSize=10;
 
-    private ArticleService articleService;
+    private CommentService commentService;
 
     @Autowired
-    private ArticleController(ArticleService articleService) {
-        this.articleService = articleService;
+    private CommentController(CommentService commentService) {
+        this.commentService = commentService;
     }
 
 
@@ -96,9 +92,9 @@ public class ArticleController {
         if(UtilValidation.isNegativeInt(pageNo))
             throw new CustomException(this.getClass(), LIST,PAGENO_SHOULD_NOT_BE_NEGATIVE_VALUE);
 
-        List<ArticleDTO> articleDTOList = articleService.getList(pageNo,pageSize);
-        UtilPagination utilPagination=articleService.getPagination(pageNo,pageSize);
-        modelAndView.addObject(ARTICLE_DTO_LIST,articleDTOList);
+        List<CommentDTO> commentDTOList = commentService.getList(pageNo,pageSize);
+        UtilPagination utilPagination=commentService.getPagination(pageNo,pageSize);
+        modelAndView.addObject(COMMENT_DTO_LIST,commentDTOList);
         modelAndView.addObject(PAGINATION,utilPagination);
 
         modelAndView.setViewName(FOLDER+ PAGE_LIST);
@@ -122,9 +118,9 @@ public class ArticleController {
 
         String keyword=constructKeyword(searchForm);
 
-        List<ArticleDTO> articleDTOList = articleService.getListBySearch(pageNo,pageSize,keyword);
-        UtilPagination utilPagination=articleService.getPaginationBySearch(pageNo,pageSize,keyword);
-        modelAndView.addObject(ARTICLE_DTO_LIST,articleDTOList);
+        List<CommentDTO> commentDTOList = commentService.getListBySearch(pageNo,pageSize,keyword);
+        UtilPagination utilPagination=commentService.getPaginationBySearch(pageNo,pageSize,keyword);
+        modelAndView.addObject(COMMENT_DTO_LIST,commentDTOList);
         modelAndView.addObject(PAGINATION,utilPagination);
         modelAndView.setViewName(FOLDER+ PAGE_SEARCH);
         return modelAndView;
@@ -132,8 +128,8 @@ public class ArticleController {
 
     @GetMapping(value = {"/write"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    private ModelAndView getWrite(Article article, ModelAndView modelAndView){
-        modelAndView.addObject("article",article);
+    private ModelAndView getWrite(Comment comment, ModelAndView modelAndView){
+        modelAndView.addObject("comment",comment);
         modelAndView.setViewName(FOLDER+ PAGE_WRITE);
         return modelAndView;
 
@@ -141,19 +137,19 @@ public class ArticleController {
 
     @PostMapping(value = {"/write"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    private ModelAndView write(@ModelAttribute @Valid Article article, BindingResult bindingResult, ModelAndView modelAndView, final Authentication authentication) {
+    private ModelAndView write(@ModelAttribute @Valid Comment comment, BindingResult bindingResult, ModelAndView modelAndView, final Authentication authentication) {
 
         if(bindingResult.hasErrors()) {
             modelAndView.setViewName(FOLDER+ PAGE_WRITE);
             return modelAndView;
         }
 
-        Boolean b=articleService.create(article,authentication);
+        Boolean b=commentService.create(comment,authentication);
         if(b) {
-            modelAndView.setViewName(REDIRECT_ARTICLE_LIST_1);
+            modelAndView.setViewName(REDIRECT_COMMENT_LIST_1);
             return  modelAndView;
         }else
-            throw new CustomException(this.getClass(), WRITE, ARTICLECONTROLLER_WRITE_FAIL);
+            throw new CustomException(this.getClass(), WRITE, COMMENTCONTROLLER_WRITE_FAIL);
     }
 
 
@@ -163,12 +159,12 @@ public class ArticleController {
         if(UtilValidation.isNegativeInt(id))
             throw new CustomException(this.getClass(),READ,ID_SHOULD_NOT_BE_NEGATIVE_VALUE);
 
-        ArticleDTO articleDTO=articleService.read(id);
+        CommentDTO commentDTO=commentService.read(id);
 
-        if(articleDTO==null)
-            throw new CustomException(this.getClass(), READ, ARTICLECONTROLLER_READ_EMPTY);
+        if(commentDTO==null)
+            throw new CustomException(this.getClass(), READ, COMMENTCONTROLLER_READ_EMPTY);
 
-        modelAndView.addObject(ARTICLE_DTO,articleDTO);
+        modelAndView.addObject(COMMENT_DTO,commentDTO);
         modelAndView.setViewName(FOLDER+ PAGE_READ);
         return modelAndView;
     }
@@ -179,39 +175,39 @@ public class ArticleController {
         if(UtilValidation.isNegativeInt(id))
             throw new CustomException(this.getClass(), UPDATE,ID_SHOULD_NOT_BE_NEGATIVE_VALUE);
 
-        ArticleDTO articleDTO=articleService.read(id);
-        if(articleDTO==null)
-            throw new CustomException(this.getClass(), UPDATE, ARTICLECONTROLLER_READ_EMPTY);
+        CommentDTO commentDTO=commentService.read(id);
+        if(commentDTO==null)
+            throw new CustomException(this.getClass(), UPDATE, COMMENTCONTROLLER_READ_EMPTY);
 
-        if(((ArticleServiceImpl)articleService).hasUpdatePermission(principal,articleDTO.getArticle())==false)
-            throw new CustomException(this.getClass(), UPDATE, NO_PERMISSION_TO_ACCESS_THIS_ARTICLE);
+        if(((CommentServiceImpl)commentService).hasUpdatePermission(principal,commentDTO.getComment())==false)
+            throw new CustomException(this.getClass(), UPDATE, NO_PERMISSION_TO_ACCESS_THIS_COMMENT);
 
-        modelAndView.addObject(ARTICLE_DTO,articleDTO);
-        modelAndView.setViewName(FOLDER+ ARTICLE_UPDATE_JSP);
+        modelAndView.addObject(COMMENT_DTO,commentDTO);
+        modelAndView.setViewName(FOLDER+ COMMENT_UPDATE_JSP);
         return modelAndView;
     }
 
 
     @PostMapping(value = {"/update"})
-    private ModelAndView update(@ModelAttribute @Valid Article article, BindingResult bindingResult,ModelAndView modelAndView, Principal principal) {
+    private ModelAndView update(@ModelAttribute @Valid Comment comment, BindingResult bindingResult,ModelAndView modelAndView, Principal principal) {
 
         //contrived injection for testing, spring security mocking not retrieving pricipal
         //it should pull from spring security contextholder
         principal=(Principal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(bindingResult.hasErrors()){
-            modelAndView.setViewName(PAGE_ARTICLE_UPDATE);
+            modelAndView.setViewName(PAGE_COMMENT_UPDATE);
             return  modelAndView;
         }
 
-        Boolean b=articleService.update(article,principal);
+        Boolean b=commentService.update(comment,principal);
 
         if(b){
-            modelAndView.setViewName(REDIRECT_ARTICLE_LIST_1);
+            modelAndView.setViewName(REDIRECT_COMMENT_LIST_1);
             return modelAndView;
         }
         else
-            throw new CustomException(this.getClass(), UPDATE, UPDATE_ARTICLE_FAILED);
+            throw new CustomException(this.getClass(), UPDATE, UPDATE_COMMENT_FAILED);
     }
 
     @PostMapping( value = {"/delete/{id}"})
@@ -221,13 +217,13 @@ public class ArticleController {
         if(UtilValidation.isNegativeInt(id))
             throw new CustomException(this.getClass(),DELETE,ID_SHOULD_NOT_BE_NEGATIVE_VALUE);
 
-        Boolean b=articleService.delete(id, authentication);
+        Boolean b=commentService.delete(id, authentication);
 
         if(b) {
-            modelAndView.setViewName(REDIRECT_ARTICLE_LIST_1);
+            modelAndView.setViewName(REDIRECT_COMMENT_LIST_1);
             return modelAndView;
         }else
-            throw new CustomException(this.getClass(), DELETE, ARTICLECONTROLLER_DELETE_FAIL);
+            throw new CustomException(this.getClass(), DELETE, COMMENTCONTROLLER_DELETE_FAIL);
     }
 
 
@@ -240,7 +236,10 @@ public class ArticleController {
         keyword.append(key);
 
         switch (key){
-            case "title":
+            case "id":
+                keyword.append("=").append(value);
+                break;
+            case "body":
                 keyword.append(" like '%").append(value).append("%'");
                 break;
         }

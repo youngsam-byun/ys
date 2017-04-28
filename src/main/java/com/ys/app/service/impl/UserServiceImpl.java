@@ -24,10 +24,10 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
 
-    @Value("${userService.updateUser.noPermission}")
+    @Value("${userService.update.noPermission}")
     private static final String NO_PERMISSION_TO_UPDATE_USER = "userService.updateUser.noPermission";
 
-    @Value("${userService.createUser.noPermission}")
+    @Value("${userService.create.noPermission}")
     private final String NO_PERMISSION_TO_CREATE_USER = "userService.createUser.noPermission";
 
     private UserRepository userRepository;
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean createUser(User user, Principal principal) {
+    public boolean create(User user, Principal principal) {
         if (UtilValidation.isNull(user, principal))
             throw new NullPointerException();
 
@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updateUser(User user, Principal principal) {
+    public boolean update(User user, Principal principal) {
         if (UtilValidation.isNull(user, principal))
             throw new NullPointerException();
 

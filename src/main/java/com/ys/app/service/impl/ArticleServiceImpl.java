@@ -55,7 +55,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean writeArticle(Article article, Principal principal) {
+    public boolean create(Article article, Principal principal) {
         if (UtilValidation.isNull(article, principal))
             throw new NullPointerException();
 
@@ -67,7 +67,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public ArticleDTO readArticle(Integer id) {
+    public ArticleDTO read(Integer id) {
         if (UtilValidation.isNull(id))
             throw new NullPointerException();
 
@@ -88,7 +88,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean updateArticle(Article article, Principal principal) {
+    public boolean update(Article article, Principal principal) {
         if (UtilValidation.isNull(article, principal))
             throw new NullPointerException();
 
@@ -99,7 +99,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean deleteArticle(Integer id, Principal principal) {
+    public boolean delete(Integer id, Principal principal) {
         if (UtilValidation.isNull(id))
             throw new NullPointerException();
 
@@ -164,7 +164,7 @@ public class ArticleServiceImpl implements ArticleService {
         return ((CustomUserDetails) principal).getUser();
     }
 
-    private boolean hasUpdatePermission(Principal principal, Article article) {
+    public boolean hasUpdatePermission(Principal principal, Article article) {
         User user = getUser(principal);
         int roleId = user.getRoleId();
         int id = user.getId();

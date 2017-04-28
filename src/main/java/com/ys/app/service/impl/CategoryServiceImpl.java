@@ -157,7 +157,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Cacheable
     public Map<Integer, Category> getAllHashMap() {
         List<Category> categoryList = categoryRepository.getAll();
         Map<Integer, Category> hashMap = new HashMap<>();
@@ -166,6 +165,10 @@ public class CategoryServiceImpl implements CategoryService {
         }
         return hashMap;
 
+    }
+
+    public boolean hasPermission(Principal principal) {
+        return  hasPermission(principal,role);
     }
 
     private boolean hasPermission(Principal principal, Role role) {

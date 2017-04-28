@@ -2,23 +2,16 @@ package com.ys.app.security.factory;
 
 import com.ys.app.model.Role;
 import com.ys.app.model.User;
-import com.ys.app.repo.impl.JdbcUserRepositoryImpl;
 import com.ys.app.security.CustomUserDetails;
-import com.ys.app.security.service.CustomUserDetailsService;
-import com.ys.app.service.impl.UserServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
-import org.springframework.security.test.context.support.WithUserDetails;
 
-import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,6 +29,8 @@ public final class WithCustomUserDetailsSecurityContextFactory implements WithSe
         User user=new User();
         user.setRoleId(9);
         user.setId(1);
+        String encoded=new BCryptPasswordEncoder().encode("password");
+        user.setPassword(encoded);
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
 

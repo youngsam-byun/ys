@@ -55,7 +55,7 @@ public class CommentServiceImplTest {
     @Test(expected = NullPointerException.class)
     public void A_writeComment_throwNullPointerException() {
 
-        commentService.writeComment(null, null);
+        commentService.create(null, null);
         verify(commentRepository, times(0)).create(null);
         verifyNoMoreInteractions(commentRepository);
 
@@ -66,14 +66,14 @@ public class CommentServiceImplTest {
 
         Comment actual = new Comment();
         Authentication authentication = returnAuthentication(new User(), 0);
-        commentService.writeComment(actual, authentication);
+        commentService.create(actual, authentication);
         verify(commentRepository, times(0)).create(null);
         verifyNoMoreInteractions(commentRepository);
     }
 
     @Test(expected = NullPointerException.class)
     public void C_readComment_throwNullPointerException() {
-        commentService.readComment(null);
+        commentService.read(null);
         verify(commentRepository, times(0)).read(0);
         verifyNoMoreInteractions(commentRepository);
     }
@@ -82,7 +82,7 @@ public class CommentServiceImplTest {
     @Test(expected = NullPointerException.class)
     public void D_updateComment_shouldThrowNullPointerException() {
 
-        commentService.updateComment(null, null);
+        commentService.update(null, null);
         verify(commentRepository, times(0)).update(null);
         verifyNoMoreInteractions(commentRepository);
 
@@ -95,7 +95,7 @@ public class CommentServiceImplTest {
         user.setId(1);
         Comment actual = new Comment();
         Authentication authentication = returnAuthentication(user, 0);
-        commentService.updateComment(actual, authentication);
+        commentService.update(actual, authentication);
         verify(commentRepository, times(0)).update(null);
         verifyNoMoreInteractions(commentRepository);
     }
@@ -104,7 +104,7 @@ public class CommentServiceImplTest {
     @Test(expected = NullPointerException.class)
     public void G_deleteComment_throwNullPointerException() {
 
-        commentService.deleteComment(null, null);
+        commentService.delete(null, null);
         verify(commentRepository, times(0)).delete(0);
         verifyNoMoreInteractions(commentRepository);
     }
@@ -154,7 +154,7 @@ public class CommentServiceImplTest {
             when(commentRepository.create(mockedComment)).thenReturn(1);
 
             Authentication authentication = returnAuthentication(new User(), 1);
-            boolean b = commentService.writeComment(mockedComment, authentication);
+            boolean b = commentService.create(mockedComment, authentication);
             assertThat(b).isTrue();
             verify(commentRepository, times(1)).create(mockedComment);
             verifyNoMoreInteractions(commentRepository);
@@ -164,7 +164,7 @@ public class CommentServiceImplTest {
         public void B_readComment_returnComment() {
             when(commentRepository.read(1)).thenReturn(mockedComment);
 
-            CommentDTO commentDTO = commentService.readComment(1);
+            CommentDTO commentDTO = commentService.read(1);
             Comment actual = commentDTO.getComment();
             assertThat(actual).isEqualTo(mockedComment);
             verify(commentRepository, times(1)).read(1);
@@ -176,7 +176,7 @@ public class CommentServiceImplTest {
             when(commentRepository.update(mockedComment)).thenReturn(1);
 
             Authentication authentication = returnAuthentication(new User(), 9);
-            boolean actual = commentService.updateComment(mockedComment, authentication);
+            boolean actual = commentService.update(mockedComment, authentication);
             assertThat(actual).isEqualTo(true);
             verify(commentRepository, times(1)).update(mockedComment);
             verifyNoMoreInteractions(commentRepository);
@@ -191,7 +191,7 @@ public class CommentServiceImplTest {
             User user = new User();
             user.setId(1);
             Authentication authentication = returnAuthentication(user, 9);
-            boolean b = commentService.deleteComment(1, authentication);
+            boolean b = commentService.delete(1, authentication);
             assertThat(b).isTrue();
             verify(commentRepository, times(1)).read(1);
             verify(commentRepository, times(1)).delete(1);

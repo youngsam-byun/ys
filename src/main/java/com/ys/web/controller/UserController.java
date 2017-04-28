@@ -4,11 +4,14 @@ import com.ys.app.exception.CustomException;
 import com.ys.app.model.User;
 import com.ys.app.model.validator.PasswordUpdateFormValidator;
 import com.ys.app.model.validator.form.PasswordUpdateForm;
+import com.ys.app.model.validator.form.SearchForm;
 import com.ys.app.security.CustomUserDetails;
 import com.ys.app.security.service.CustomUserDetailsService;
 import com.ys.app.service.UserService;
+import com.ys.app.util.UtilPagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -18,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -46,6 +50,11 @@ public class UserController {
     private static final String PAGE_RESET_PASSWORD_EXPIRED = "/user_resetPasswordExpired.jsp";
     private static final String RESET_PASSWORD = "resetPassword";
     private static final String REDIRECT_USER_UPDATE_PASSWORD = "redirect:/user/updatePassword";
+    private static final String PAGE_USER_LIST = "user_list.jsp";
+    private static final String PAGE_LIST_BY_SEARCH = "user_listBySearch.jsp";
+    private static final String USER_LIST = "userList";
+    private static final String PAGE_SEARCH = "/user_search.jsp";
+    private static final String PAGINATION = "pagination";
 
 
     @Value("${userController.signUp.fail}")
@@ -83,13 +92,13 @@ public class UserController {
     }
 
     @GetMapping(value = {"/welcome"})
-    public ModelAndView welcome(ModelAndView modelAndview) {
+    private ModelAndView welcome(ModelAndView modelAndview) {
         modelAndview.setViewName(FOLDER + PAGE_WELCOME);
         return modelAndview;
     }
 
     @GetMapping(value = {"/signup"})
-    public ModelAndView getSignUp(ModelAndView modelAndView) {
+    private ModelAndView getSignUp(ModelAndView modelAndView) {
         modelAndView.setViewName(FOLDER + PAGE_SIGNUP);
         modelAndView.addObject(USER, new User());
         return modelAndView;
@@ -97,7 +106,7 @@ public class UserController {
     }
 
     @PostMapping(value = {"/signup"})
-    public ModelAndView signUp(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, ModelAndView modelAndView, final Principal principal) {
+    private ModelAndView signUp(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, ModelAndView modelAndView, final Principal principal) {
 
 
         if (bindingResult.hasErrors()) {
@@ -105,7 +114,7 @@ public class UserController {
             return modelAndView;
         }
 
-        Boolean b = userService.createUser(user, principal);
+        Boolean b = userService.create(user, principal);
 
         if (b) {
             modelAndView.setViewName(REDIRECT_USER_LOGIN);
@@ -116,7 +125,7 @@ public class UserController {
 
 
     @GetMapping(value = {"/update"})
-    public ModelAndView getUpdate(ModelAndView modelAndView) {
+    private ModelAndView getUpdate(ModelAndView modelAndView) {
         modelAndView.setViewName(FOLDER + PAGE_UPDATE);
         modelAndView.addObject(USER, new User());
         return modelAndView;
@@ -124,14 +133,14 @@ public class UserController {
     }
 
     @PostMapping(value = {"/update"})
-    public ModelAndView update(@ModelAttribute("user") @Valid User user,BindingResult bindingResult, ModelAndView modelAndView,final Principal principal) {
+    private ModelAndView update(@ModelAttribute("user") @Valid User user,BindingResult bindingResult, ModelAndView modelAndView,final Principal principal) {
 
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName(FOLDER + PAGE_UPDATE);
             return modelAndView;
         }
 
-        Boolean b = userService.updateUser(user, principal);
+        Boolean b = userService.update(user, principal);
 
         if (b) {
             modelAndView.setViewName(REDIRECT_HOME);
@@ -142,13 +151,13 @@ public class UserController {
 
 
     @GetMapping(value = {"/updatePassword"})
-    public ModelAndView getUpdatePassword(ModelAndView modelAndView) {
+    private ModelAndView getUpdatePassword(ModelAndView modelAndView) {
         modelAndView.setViewName(FOLDER + PAGE_UPDATE_PASSWORD);
         return modelAndView;
     }
 
     @PostMapping(value = {"/updatePassword"})
-    public ModelAndView updatePassword(@ModelAttribute @Valid PasswordUpdateForm passwordUpdateForm,
+    private ModelAndView updatePassword(@ModelAttribute @Valid PasswordUpdateForm passwordUpdateForm,
                                        BindingResult bindingResult,
                                        ModelAndView modelAndView,
                                        Principal principal
@@ -184,7 +193,7 @@ public class UserController {
 
 
     @GetMapping(value = {"/resetPassword"})
-    public ModelAndView getResetPassword(@RequestParam("str") String str, ModelAndView modelAndView) {
+    private ModelAndView getResetPassword(@RequestParam("str") String str, ModelAndView modelAndView) {
 
         User user= userService.readByStr(str);
         if(user==null)
@@ -202,6 +211,45 @@ public class UserController {
         return modelAndView;
     }
 
+    @GetMapping(value = {"/list","/list/{pageNo}"})
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    private ModelAndView getList(@PathVariable(required = false) Integer pageNo, ModelAndView modelAndView) {
+
+        if(pageNo==null)
+            pageNo=1;
+
+        List<User> userList=userService.getList(pageNo,pageSize);
+        UtilPagination utilPagination=userService.getPagination(pageNo,pageSize);
+
+        modelAndView.addObject(USER_LIST,userList);
+        modelAndView.addObject(PAGINATION,utilPagination);
+        modelAndView.setViewName(FOLDER + PAGE_USER_LIST);
+        return modelAndView;
+    }
+
+    @PostMapping(value = {"/search","/search/{pageNo}"})
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    private ModelAndView getListBySearch(@ModelAttribute SearchForm searchForm,BindingResult bindingResult,@PathVariable(required = false) Integer pageNo,  ModelAndView modelAndView) {
+
+        if(bindingResult.hasErrors()){
+            modelAndView.setViewName(PAGE_SEARCH);
+            return modelAndView;
+        }
+
+        if(pageNo==null)
+            pageNo=1;
+
+        String keyword=constructKeyword(searchForm);
+
+        List<User> userList=userService.getListBySearch(pageNo,pageSize,keyword);
+        UtilPagination utilPagination=userService.getPaginationBySearch(pageNo,pageSize,keyword);
+
+        modelAndView.addObject(USER_LIST,userList);
+        modelAndView.addObject(PAGINATION,utilPagination);
+        modelAndView.setViewName(FOLDER + PAGE_LIST_BY_SEARCH);
+        return modelAndView;
+    }
+
     private boolean isResetExpired(Date updateTime) {
         Date currentTime=new Date();
 
@@ -212,5 +260,28 @@ public class UserController {
         return ((CustomUserDetails)principal).getUser();
     }
 
+    private String constructKeyword(SearchForm searchForm){
+        String key=searchForm.getKey();
+        String value=searchForm.getValue();
+
+        StringBuilder keyword=new StringBuilder();
+
+        keyword.append(key);
+
+        switch (key){
+            case "id":
+                keyword.append("=").append(value);
+                break;
+            case "email":
+                keyword.append(" like '%").append(value).append("%'");
+                break;
+            case "username":
+                keyword.append(" like '%").append(value).append("%'");
+                break;
+        }
+
+        return keyword.toString();
+
+    }
 
 }
