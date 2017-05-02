@@ -51,6 +51,7 @@ public class CategoryRowMapper extends BaseRowMapper<Category> {
                 .addValue(NAME, category.getName())
                 .addValue(CREATE_TIME,category.getCreateTime())
                 .addValue(UPDATE_TIME,category.getUpdateTime())
+
                 .addValue(DELETED, category.isDeleted());
     }
 }
