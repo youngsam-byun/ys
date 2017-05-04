@@ -37,6 +37,7 @@ import static org.mockito.Mockito.*;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ArticleServiceImplTest {
 
+    public static final int SOURCE_DURATION = 60;
     ArticleService articleService;
 
 
@@ -58,9 +59,6 @@ public class ArticleServiceImplTest {
 
     @Test(expected = NullPointerException.class)
     public void A_writeArticle_throwNullPointerException() {
-
-        long limit=MILLISECONDS.convert(60,MINUTES);
-        System.out.println(limit);
 
         articleService.create(null, null);
         verify(articleRepository,times(0)).create(null);

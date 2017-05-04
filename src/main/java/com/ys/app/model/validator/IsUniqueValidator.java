@@ -3,6 +3,7 @@ package com.ys.app.model.validator;
 import com.ys.app.model.User;
 import com.ys.app.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintValidator;

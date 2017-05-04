@@ -15,7 +15,6 @@
         <java-version>1.8</java-version>
         <junit.version>4.12</junit.version>
         <org.springframework-version>4.3.7.RELEASE</org.springframework-version>
-        <org.aspectj-version>1.8.9</org.aspectj-version>
         <org.slf4j-version>1.7.21</org.slf4j-version>
         <org.apache.tiles-version>3.0.7</org.apache.tiles-version>
         <org.springframework.security-version>4.2.2.RELEASE</org.springframework.security-version>
@@ -45,8 +44,9 @@
         <mockito-all.version>1.10.19</mockito-all.version>
         <hamcrest-library.version>1.3</hamcrest-library.version>
 
+        <log4j2.version>2.8.2</log4j2.version>
 
-
+        <org.aspectj-version>1.8.10</org.aspectj-version>
     </properties>
 
     <dependencies>
@@ -270,6 +270,20 @@
             <groupId>org.apache.tiles</groupId>
             <artifactId>tiles-jsp</artifactId>
             <version>${org.apache.tiles-version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${org.aspectj-version}</version>
         </dependency>
 
 

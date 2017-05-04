@@ -9,11 +9,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 
 
 @Configuration
-@Import(value = {DataSourceConfig_DEV.class})
+@Import(value = {DataSourceConfig_STG.class,MVCConfig_STG.class})
 @PropertySource(value = { "classpath:property/application.properties","classpath:labels/label.properties","classpath:messages/message.properties","classpath:validations/validation.properties" })
 @ComponentScan(basePackages = { "com.ys.app" })
-@ActiveProfiles(profiles = {"dev"})
-public class AppConfig_DEV extends WebMvcConfigurationSupport {
+@ActiveProfiles(profiles = {"stg"})
+public class AppConfig_STG extends WebMvcConfigurationSupport {
 
 	public static final String DEFAULT_ENCODING = "UTF-8";
 
@@ -23,7 +23,7 @@ public class AppConfig_DEV extends WebMvcConfigurationSupport {
 	}
 
 	@Bean(name = "messageSource")
-	public MessageSource messageSource() {
+	public static MessageSource messageSource() {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 		messageSource.setBasenames("classpath:labels","classpath:messages","classpath:validations");
 		messageSource.setDefaultEncoding(DEFAULT_ENCODING);

@@ -4,6 +4,7 @@ package com.ys.app.model.validator;
 import com.ys.app.model.validator.form.PasswordUpdateForm;
 import com.ys.app.security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
