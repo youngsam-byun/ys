@@ -57,20 +57,20 @@ public class UserController {
     private static final String PAGINATION = "pagination";
 
 
-    @Value("${userController.signUp.fail}")
-    private final String USERCONTROLLER_SIGNUP_FAIL = "userController.signUp.fail";
-    @Value("${userController.update.fail}")
-    private final String USERCONTROLLER_UPDATE_FAIL = "userController.update.fail";
-    @Value("${userController.updatePassword.fail}")
-    private static final String USER_CONTROLLER_UPDATE_PASSWORD_FAIL = "userController.updatePassword.fail";
-    @Value("${userController.resetPassword.fail}")
-    private static final String USER_CONTROLLER_RESET_PASSWORD_FAIL = "userController.resetPassword.fail";
+    @Value("${userController.signUp.fail?:userController.signUp.fail}")
+    private String USERCONTROLLER_SIGNUP_FAIL;
+    @Value("${userController.update.fail?:userController.update.fail}")
+    private String USERCONTROLLER_UPDATE_FAIL;
+    @Value("${userController.updatePassword.fail?:userController.updatePassword.fail}")
+    private String USER_CONTROLLER_UPDATE_PASSWORD_FAIL;
+    @Value("${userController.resetPassword.fail?:userController.resetPassword.fail}")
+    private String USER_CONTROLLER_RESET_PASSWORD_FAIL ;
 
-    @Value("${userController.resetPassword.notExist}")
-    private static final String USER_DOES_NOT_EXIST = "userController.resetPassword.notExist";
+    @Value("${userController.resetPassword.notExist?:userController.resetPassword.fail}")
+    private String USER_DOES_NOT_EXIST ;
 
     @Value("${page.size?:10}")
-    private Integer pageSize = 10;
+    private Integer pageSize;
 
     private UserService userService;
     private PasswordUpdateFormValidator passwordUpdateFormValidator;
@@ -106,7 +106,7 @@ public class UserController {
     }
 
     @PostMapping(value = {"/signup"})
-    private ModelAndView signUp(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, ModelAndView modelAndView, final Principal principal) {
+    private ModelAndView signUp(@ModelAttribute @Valid User user, BindingResult bindingResult, ModelAndView modelAndView, final Principal principal) {
 
 
         if (bindingResult.hasErrors()) {
@@ -114,7 +114,7 @@ public class UserController {
             return modelAndView;
         }
 
-        Boolean b = userService.create(user, principal);
+        Boolean b = userService.create(user);
 
         if (b) {
             modelAndView.setViewName(REDIRECT_USER_LOGIN);
@@ -133,12 +133,16 @@ public class UserController {
     }
 
     @PostMapping(value = {"/update"})
-    private ModelAndView update(@ModelAttribute("user") @Valid User user,BindingResult bindingResult, ModelAndView modelAndView,final Principal principal) {
+    private ModelAndView update(@ModelAttribute("user") @Valid User user,BindingResult bindingResult, ModelAndView modelAndView,Principal principal) {
 
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName(FOLDER + PAGE_UPDATE);
             return modelAndView;
         }
+
+        //contrived injection for testing, spring security mocking not retrieving pricipal
+        //it should pull from spring security contextholder
+        principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Boolean b = userService.update(user, principal);
 

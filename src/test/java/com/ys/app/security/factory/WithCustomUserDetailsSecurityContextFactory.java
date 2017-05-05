@@ -25,10 +25,16 @@ public final class WithCustomUserDetailsSecurityContextFactory implements WithSe
     @Override
     public SecurityContext createSecurityContext(WithCustomMockUser withCustomMockUser) {
 
+        int id=withCustomMockUser.id();
+        int roleId=withCustomMockUser.roleId();
+        String username=withCustomMockUser.username();
 
         User user=new User();
-        user.setRoleId(9);
-        user.setId(1);
+        user.setRoleId(roleId);
+        user.setId(id);
+        user.setUsername(username);
+
+
         String encoded=new BCryptPasswordEncoder().encode("password");
         user.setPassword(encoded);
         SecurityContext context = SecurityContextHolder.createEmptyContext();

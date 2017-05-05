@@ -20,13 +20,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.Resource;
 import java.util.*;
 
+import static org.mockito.Matchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -98,11 +101,13 @@ public class UserControllerTest_ITG {
     }
 
     @Test
+    @Transactional
     public  void G_signUp_return301RedirectSuccessPage() throws Exception {
-        user.setEmail("test@test.com");
-        user.setPassword("password");
+        user.setEmail("test3@test.com");
         user.setUsername("username");
+        user.setPassword("password");
         user.setPasswordConfirm("password");
+        user.setRoleId(1);
 
 
         mockMvc.perform(post("/user/signup")
@@ -143,16 +148,19 @@ public class UserControllerTest_ITG {
     }
 
     @Test
+    @WithCustomMockUser(username = "supermane",roleId = 3,id=394)
     public  void K_update_return301RedirectSuccessPage() throws Exception {
 
 
-        user.setEmail("email@email.com");
+        user.setEmail("test1@test.com");
+        user.setUsername("username");
         user.setPassword("password");
         user.setPasswordConfirm("password");
-        user.setUsername("username");
+        user.setId(394);
         user.setRoleId(1);
 
         mockMvc.perform(post("/user/update")
+                .param("id",String.valueOf(user.getId()))
                 .param("email",user.getEmail())
                 .param("username",user.getUsername())
                 .param("password",user.getPassword())
@@ -210,15 +218,15 @@ public class UserControllerTest_ITG {
 
 
     @Test
-    @WithCustomMockUser
+    @WithCustomMockUser(roleId = 9,username = "super",id = 394)
     public  void L_updatePassword_return200RedirectToHome() throws Exception {
 
-        user.setEmail("email@email.com");
+        user.setEmail("test1@test.com");
+        user.setUsername("username");
         user.setPassword("password");
         user.setPasswordConfirm("password");
-        user.setUsername("username");
         user.setRoleId(1);
-
+        user.setId(394);
 
         mockMvc.perform(post("/user/updatePassword")
                 .param("oldPassword",user.getPassword())
@@ -235,7 +243,7 @@ public class UserControllerTest_ITG {
 
 
         mockMvc.perform(get("/user/list")
-        ).andExpect(status().isOk()).andExpect(model().attribute("userList",userList));
+        ).andExpect(status().isOk()).andExpect(model().attributeExists("userList"));
 
     }
 
@@ -246,8 +254,9 @@ public class UserControllerTest_ITG {
         List<User> userList= new ArrayList<>();
 
         mockMvc.perform(post("/user/search")
-                .param("key","username").param("value","youngs")
-        ).andExpect(status().isOk()).andExpect(model().attribute("userList",userList));
+                .param("key","username").param("value","ys u")
+        ).andDo(print()).andExpect(status().isOk()).andExpect(model().attributeExists("userList"));
 
     }
+
 }

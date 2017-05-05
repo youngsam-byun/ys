@@ -42,6 +42,19 @@ public class UserServiceImpl implements UserService {
         bCryptPasswordEncoder = new BCryptPasswordEncoder();
     }
 
+
+    @Override
+    public boolean create(User user) {
+        if (UtilValidation.isNull(user))
+            throw new NullPointerException();
+
+
+        String encoded = encodePassword(user);
+        user.setPassword(encoded);
+
+        return userRepository.create(user) >= 1;
+    }
+
     @Override
     public boolean create(User user, Principal principal) {
         if (UtilValidation.isNull(user, principal))
@@ -51,6 +64,8 @@ public class UserServiceImpl implements UserService {
             throw new AccessDeniedException(NO_PERMISSION_TO_CREATE_USER);
 
 
+        user.setNotLocked(true);
+        user.setEnabled(true);
         String encoded = encodePassword(user);
         user.setPassword(encoded);
 

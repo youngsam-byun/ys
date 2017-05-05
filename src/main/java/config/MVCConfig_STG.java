@@ -47,7 +47,7 @@ public class MVCConfig_STG extends WebMvcConfigurerAdapter {
 	@Bean
 	public ViewResolver resourceBundleViewResolver() {
 		ResourceBundleViewResolver resourceBundleViewResolver = new ResourceBundleViewResolver();
-		resourceBundleViewResolver.setOrder(1);
+		resourceBundleViewResolver.setOrder(2);
 		resourceBundleViewResolver.setBasename("views");
 		return resourceBundleViewResolver;
 	}
@@ -55,7 +55,7 @@ public class MVCConfig_STG extends WebMvcConfigurerAdapter {
 	@Bean
 	public ViewResolver internalResourceViewResolver() {
 		InternalResourceViewResolver internalResourceViewResolver = new InternalResourceViewResolver();
-		internalResourceViewResolver.setOrder(2);
+		internalResourceViewResolver.setOrder(1);
 		internalResourceViewResolver.setPrefix("/WEB-INF/views/");
 		internalResourceViewResolver.setSuffix(".jsp");
 		return internalResourceViewResolver;

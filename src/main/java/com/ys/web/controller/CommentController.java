@@ -11,7 +11,7 @@ import com.ys.app.util.UtilValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -40,7 +40,7 @@ public class CommentController {
     private static final String COMMENT_DTO_LIST= "commentDTOList";
     private static final String COMMENT_DTO = "commentDTO";
     private static final String READ = "read";
-    private static final String WRITE = "write";
+    private static final String WRITE = "create";
     private static final String DELETE = "delete";
     private static final String LIST = "list";
     private static final String REDIRECT_COMMENT_LIST_1 = "redirect:/comment/list/1";
@@ -51,30 +51,30 @@ public class CommentController {
     private static final String PAGE_COMMENT_UPDATE = "/comment/update.jsp";
 
 
-    @Value("${commentController.read.empty}")
-    private final String COMMENTCONTROLLER_READ_EMPTY = "commentController.read.empty";
+    @Value("${commentController.read.empty?:commentController.read.empty}")
+    private String COMMENTCONTROLLER_READ_EMPTY;
 
-    @Value("${commentController.delete.fail}")
-    private final String  COMMENTCONTROLLER_DELETE_FAIL= "commentController.delete.fail";
+    @Value("${commentController.delete.fail?:commentController.delete.fail}")
+    private String  COMMENTCONTROLLER_DELETE_FAIL;
 
-    @Value("${commentController.write.fail}")
-    private final String COMMENTCONTROLLER_WRITE_FAIL ="commentController.write.fail" ;
+    @Value("${commentController.create.fail?:commentController.write.fail}")
+    private String COMMENTCONTROLLER_WRITE_FAIL;
 
-    @Value("${commentController.update.fail}")
-    private static final String UPDATE_COMMENT_FAILED = "Update comment failed";
+    @Value("${commentController.update.fail?:commentController.update.fail}")
+    private String UPDATE_COMMENT_FAILED;
 
-    @Value("${commentController.id.notNegative}")
-    private static final String ID_SHOULD_NOT_BE_NEGATIVE_VALUE = "commentController.id.notNegative";
+    @Value("${commentController.id.notNegative?:commentController.id.notNegative}")
+    private String ID_SHOULD_NOT_BE_NEGATIVE_VALUE ;
 
-    @Value("${commentController.keyword.notEmpty}")
-    private String SEARCH_KEYWORD_SHOULD_NOT_BE_EMPTY="commentController.keyword.notEmpty";
+    @Value("${commentController.keyword.notEmpty?:commentController.keyword.notEmpty}")
+    private String SEARCH_KEYWORD_SHOULD_NOT_BE_EMPTY;
 
 
-    @Value("${commentController.pageNo.notNegative}")
-    private static final String PAGENO_SHOULD_NOT_BE_NEGATIVE_VALUE = "commentController.pageNo.notNegative";
+    @Value("${commentController.pageNo.notNegative?:commentController.pageNo.notNegative}")
+    private String PAGENO_SHOULD_NOT_BE_NEGATIVE_VALUE ;
 
     @Value("${page.size?:10}")
-    private Integer pageSize=10;
+    private Integer pageSize;
 
     private CommentService commentService;
 
@@ -126,25 +126,29 @@ public class CommentController {
         return modelAndView;
     }
 
-    @GetMapping(value = {"/write"})
+    @GetMapping(value = {"/create"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    private ModelAndView getWrite(Comment comment, ModelAndView modelAndView){
+    private ModelAndView getCreate(Comment comment, ModelAndView modelAndView){
         modelAndView.addObject("comment",comment);
         modelAndView.setViewName(FOLDER+ PAGE_WRITE);
         return modelAndView;
 
     }
 
-    @PostMapping(value = {"/write"})
+    @PostMapping(value = {"/create"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    private ModelAndView write(@ModelAttribute @Valid Comment comment, BindingResult bindingResult, ModelAndView modelAndView, final Authentication authentication) {
+    private ModelAndView create(@ModelAttribute @Valid Comment comment, BindingResult bindingResult, ModelAndView modelAndView, Principal principal) {
+
+        //contrived injection for testing, spring security mocking not retrieving pricipal
+        //it should pull from spring security contextholder
+        principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(bindingResult.hasErrors()) {
             modelAndView.setViewName(FOLDER+ PAGE_WRITE);
             return modelAndView;
         }
 
-        Boolean b=commentService.create(comment,authentication);
+        Boolean b=commentService.create(comment,principal);
         if(b) {
             modelAndView.setViewName(REDIRECT_COMMENT_LIST_1);
             return  modelAndView;
@@ -193,7 +197,7 @@ public class CommentController {
 
         //contrived injection for testing, spring security mocking not retrieving pricipal
         //it should pull from spring security contextholder
-        principal=(Principal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(bindingResult.hasErrors()){
             modelAndView.setViewName(PAGE_COMMENT_UPDATE);
@@ -212,12 +216,12 @@ public class CommentController {
 
     @PostMapping( value = {"/delete/{id}"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    private ModelAndView delete(ModelAndView modelAndView, @PathVariable Integer id,final  Authentication authentication) {
+    private ModelAndView delete(ModelAndView modelAndView, @PathVariable Integer id,final  Principal principal) {
 
         if(UtilValidation.isNegativeInt(id))
             throw new CustomException(this.getClass(),DELETE,ID_SHOULD_NOT_BE_NEGATIVE_VALUE);
 
-        Boolean b=commentService.delete(id, authentication);
+        Boolean b=commentService.delete(id, principal);
 
         if(b) {
             modelAndView.setViewName(REDIRECT_COMMENT_LIST_1);

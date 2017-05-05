@@ -11,7 +11,6 @@ import com.ys.app.util.UtilValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -33,14 +32,14 @@ public class ArticleController {
     private static final String FOLDER="/article";
     private static final String PAGE_LIST = "/article_list.jsp";
     private static final String PAGE_READ = "/article_read.jsp";
-    private static final String PAGE_WRITE = "/article_write.jsp";
+    private static final String PAGE_CREATE = "/article_create.jsp";
     private static final String PAGE_SEARCH = "article_search.jsp";
 
     private static final String PAGINATION = "pagination";
     private static final String ARTICLE_DTO_LIST= "articleDTOList";
     private static final String ARTICLE_DTO = "articleDTO";
     private static final String READ = "read";
-    private static final String WRITE = "write";
+    private static final String WRITE = "create";
     private static final String DELETE = "delete";
     private static final String LIST = "list";
     private static final String REDIRECT_ARTICLE_LIST_1 = "redirect:/article/list/1";
@@ -51,27 +50,27 @@ public class ArticleController {
     private static final String PAGE_ARTICLE_UPDATE = "/article/update.jsp";
 
 
-    @Value("${articleController.read.empty}")
-    private final String ARTICLECONTROLLER_READ_EMPTY = "articleController.read.empty";
+    @Value("${articleController.read.empty?:articleController.read.empty}")
+    private String ARTICLECONTROLLER_READ_EMPTY;
 
-    @Value("${articleController.delete.fail}")
-    private final String  ARTICLECONTROLLER_DELETE_FAIL= "articleController.delete.fail";
+    @Value("${articleController.delete.fail?:articleController.delete.fail}")
+    private String  ARTICLECONTROLLER_DELETE_FAIL;
 
-    @Value("${articleController.write.fail}")
-    private final String ARTICLECONTROLLER_WRITE_FAIL ="articleController.write.fail" ;
+    @Value("${articleController.create.fail?:articleController.create.fail}")
+    private String ARTICLECONTROLLER_WRITE_FAIL;
 
-    @Value("${articleController.update.fail}")
-    private static final String UPDATE_ARTICLE_FAILED = "Update article failed";
+    @Value("${articleController.update.fail?:articleController.update.fail}")
+    private String UPDATE_ARTICLE_FAILED ;
 
-    @Value("${articleController.id.notNegative}")
-    private static final String ID_SHOULD_NOT_BE_NEGATIVE_VALUE = "articleController.id.notNegative";
+    @Value("${articleController.id.notNegative?:articleController.id.notNegative}")
+    private String ID_SHOULD_NOT_BE_NEGATIVE_VALUE ;
 
-    @Value("${articleController.keyword.notEmpty}")
-    private String SEARCH_KEYWORD_SHOULD_NOT_BE_EMPTY="articleController.keyword.notEmpty";
+    @Value("${articleController.keyword.notEmpty?:articleController.keyword.notEmpty}")
+    private String SEARCH_KEYWORD_SHOULD_NOT_BE_EMPTY;
 
 
-    @Value("${articleController.pageNo.notNegative}")
-    private static final String PAGENO_SHOULD_NOT_BE_NEGATIVE_VALUE = "articleController.pageNo.notNegative";
+    @Value("${articleController.pageNo.notNegative?:articleController.pageNo.notNegative}")
+    private String PAGENO_SHOULD_NOT_BE_NEGATIVE_VALUE;
 
 
 
@@ -130,25 +129,30 @@ public class ArticleController {
         return modelAndView;
     }
 
-    @GetMapping(value = {"/write"})
+    @GetMapping(value = {"/create"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    private ModelAndView getWrite(Article article, ModelAndView modelAndView){
+    private ModelAndView getCreate(Article article, ModelAndView modelAndView){
         modelAndView.addObject("article",article);
-        modelAndView.setViewName(FOLDER+ PAGE_WRITE);
+        modelAndView.setViewName(FOLDER+ PAGE_CREATE);
         return modelAndView;
 
     }
 
-    @PostMapping(value = {"/write"})
+    @PostMapping(value = {"/create"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    private ModelAndView write(@ModelAttribute @Valid Article article, BindingResult bindingResult, ModelAndView modelAndView, final Authentication authentication) {
+    private ModelAndView create(@ModelAttribute @Valid Article article, BindingResult bindingResult, ModelAndView modelAndView, Principal principal) {
+
+        //contrived injection for testing, spring security mocking not retrieving pricipal
+        //it should pull from spring security contextholder
+        principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
 
         if(bindingResult.hasErrors()) {
-            modelAndView.setViewName(FOLDER+ PAGE_WRITE);
+            modelAndView.setViewName(FOLDER+ PAGE_CREATE);
             return modelAndView;
         }
 
-        Boolean b=articleService.create(article,authentication);
+        Boolean b=articleService.create(article,principal);
         if(b) {
             modelAndView.setViewName(REDIRECT_ARTICLE_LIST_1);
             return  modelAndView;
@@ -174,7 +178,7 @@ public class ArticleController {
     }
 
     @GetMapping(value = {"/update/{id}"})
-    private ModelAndView getUpdate(@PathVariable Integer id, ModelAndView modelAndView, final Principal principal) {
+    private ModelAndView getUpdate(@PathVariable Integer id, ModelAndView modelAndView, Principal principal) {
 
         if(UtilValidation.isNegativeInt(id))
             throw new CustomException(this.getClass(), UPDATE,ID_SHOULD_NOT_BE_NEGATIVE_VALUE);
@@ -197,7 +201,8 @@ public class ArticleController {
 
         //contrived injection for testing, spring security mocking not retrieving pricipal
         //it should pull from spring security contextholder
-        principal=(Principal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
 
         if(bindingResult.hasErrors()){
             modelAndView.setViewName(PAGE_ARTICLE_UPDATE);
@@ -216,12 +221,12 @@ public class ArticleController {
 
     @PostMapping( value = {"/delete/{id}"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    private ModelAndView delete(ModelAndView modelAndView, @PathVariable Integer id,final  Authentication authentication) {
+    private ModelAndView delete(ModelAndView modelAndView, @PathVariable Integer id,final  Principal principal) {
 
         if(UtilValidation.isNegativeInt(id))
             throw new CustomException(this.getClass(),DELETE,ID_SHOULD_NOT_BE_NEGATIVE_VALUE);
 
-        Boolean b=articleService.delete(id, authentication);
+        Boolean b=articleService.delete(id, principal);
 
         if(b) {
             modelAndView.setViewName(REDIRECT_ARTICLE_LIST_1);

@@ -60,6 +60,7 @@ public class User {
         updateTime=new Date();
         trial=0;
         str=RandomStringUtils.randomAlphabetic(10);
+        enabled=true;
     }
 
 

@@ -10,6 +10,7 @@ import java.util.List;
  * Created by byun.ys on 4/20/2017.
  */
 public interface UserService {
+    boolean create(User user);
     boolean create(User user, Principal principal );
     User read(Integer id);
     User readByEmail(String email);

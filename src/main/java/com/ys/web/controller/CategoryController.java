@@ -32,14 +32,14 @@ public class CategoryController {
     private static final String FOLDER="/category";
     private static final String PAGE_LIST = "/category_list.jsp";
     private static final String PAGE_READ = "/category_read.jsp";
-    private static final String PAGE_WRITE = "/category_write.jsp";
+    private static final String PAGE_CREATE = "/category_create.jsp";
     private static final String PAGE_SEARCH = "category_search.jsp";
     private static final String PAGE_UPDATE = "/category_update.jsp";
 
     private static final String PAGINATION = "pagination";
     private static final String CATEGORY_LIST= "categoryList";
     private static final String READ = "read";
-    private static final String WRITE = "write";
+    private static final String WRITE = "create";
     private static final String DELETE = "delete";
     private static final String LIST = "list";
     private static final String REDIRECT_CATEGORY_LIST_1 = "redirect:/category/list/1";
@@ -47,33 +47,33 @@ public class CategoryController {
     private static final String NO_PERMISSION_TO_ACCESS_THIS_CATEGORY = "No permission to access this category";
 
     private static final String PAGE_CATEGORY_UPDATE = "/category/update.jsp";
-    public static final String CATEGORY = "category";
+    private static final String CATEGORY = "category";
 
 
-    @Value("${categoryController.read.empty}")
-    private final String CATEGORYCONTROLLER_READ_EMPTY = "categoryController.read.empty";
+    @Value("${categoryController.read.empty?:categoryController.read.empty}")
+    private String CATEGORYCONTROLLER_READ_EMPTY = "categoryController.read.empty";
 
-    @Value("${categoryController.delete.fail}")
-    private final String  CATEGORYCONTROLLER_DELETE_FAIL= "categoryController.delete.fail";
+    @Value("${categoryController.delete.fail?:categoryController.delete.fail}")
+    private String  CATEGORYCONTROLLER_DELETE_FAIL= "categoryController.delete.fail";
 
-    @Value("${categoryController.write.fail}")
-    private final String CATEGORYCONTROLLER_WRITE_FAIL ="categoryController.write.fail" ;
+    @Value("${categoryController.create.fail?:categoryController.create.fail}")
+    private String CATEGORYCONTROLLER_WRITE_FAIL ="categoryController.write.fail" ;
 
-    @Value("${categoryController.update.fail}")
-    private static final String UPDATE_CATEGORY_FAILED = "Update category failed";
+    @Value("${categoryController.update.fail?:categoryController.update.fail}")
+    private String UPDATE_CATEGORY_FAILED = "Update category failed";
 
-    @Value("${categoryController.id.notNegative}")
-    private static final String ID_SHOULD_NOT_BE_NEGATIVE_VALUE = "categoryController.id.notNegative";
+    @Value("${categoryController.id.notNegative?:categoryController.id.notNegative}")
+    private String ID_SHOULD_NOT_BE_NEGATIVE_VALUE = "categoryController.id.notNegative";
 
-    @Value("${categoryController.keyword.notEmpty}")
+    @Value("${categoryController.keyword.notEmpty?:categoryController.keyword.notEmpty}")
     private String SEARCH_KEYWORD_SHOULD_NOT_BE_EMPTY="categoryController.keyword.notEmpty";
 
 
-    @Value("${categoryController.pageNo.notNegative}")
-    private static final String PAGENO_SHOULD_NOT_BE_NEGATIVE_VALUE = "categoryController.pageNo.notNegative";
+    @Value("${categoryController.pageNo.notNegative?:categoryController.pageNo.notNegative}")
+    private String PAGENO_SHOULD_NOT_BE_NEGATIVE_VALUE = "categoryController.pageNo.notNegative";
 
     @Value("${page.size?:10}")
-    private Integer pageSize=10;
+    private Integer pageSize;
 
     private CategoryService categoryService;
 
@@ -125,21 +125,25 @@ public class CategoryController {
         return modelAndView;
     }
 
-    @GetMapping(value = {"/write"})
+    @GetMapping(value = {"/create"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    private ModelAndView getWrite(Category category, ModelAndView modelAndView){
+    private ModelAndView getCreate(Category category, ModelAndView modelAndView){
         modelAndView.addObject("category",category);
-        modelAndView.setViewName(FOLDER+ PAGE_WRITE);
+        modelAndView.setViewName(FOLDER+ PAGE_CREATE);
         return modelAndView;
 
     }
 
-    @PostMapping(value = {"/write"})
+    @PostMapping(value = {"/create"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    private ModelAndView write(@ModelAttribute @Valid Category category, BindingResult bindingResult, ModelAndView modelAndView, final Principal principal) {
+    private ModelAndView create(@ModelAttribute @Valid Category category, BindingResult bindingResult, ModelAndView modelAndView, Principal principal) {
+
+        //contrived injection for testing, spring security mocking not retrieving pricipal
+        //it should pull from spring security contextholder
+        principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(bindingResult.hasErrors()) {
-            modelAndView.setViewName(FOLDER+ PAGE_WRITE);
+            modelAndView.setViewName(FOLDER+ PAGE_CREATE);
             return modelAndView;
         }
 
@@ -169,7 +173,11 @@ public class CategoryController {
     }
 
     @GetMapping(value = {"/update/{id}"})
-    private ModelAndView getUpdate(@PathVariable Integer id, ModelAndView modelAndView, final Principal principal) {
+    private ModelAndView getUpdate(@PathVariable Integer id, ModelAndView modelAndView, Principal principal) {
+
+        //contrived injection for testing, spring security mocking not retrieving pricipal
+        //it should pull from spring security contextholder
+        principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(UtilValidation.isNegativeInt(id))
             throw new CustomException(this.getClass(), UPDATE,ID_SHOULD_NOT_BE_NEGATIVE_VALUE);
@@ -211,7 +219,11 @@ public class CategoryController {
 
     @PostMapping( value = {"/delete/{id}"})
     @PreAuthorize("hasAnyRole('USER','OPERATOR','ADMIN')")
-    private ModelAndView delete(ModelAndView modelAndView, @PathVariable Integer id,final  Principal principal) {
+    private ModelAndView delete(ModelAndView modelAndView, @PathVariable Integer id, Principal principal) {
+
+        //contrived injection for testing, spring security mocking not retrieving pricipal
+        //it should pull from spring security contextholder
+        principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(UtilValidation.isNegativeInt(id))
             throw new CustomException(this.getClass(),DELETE,ID_SHOULD_NOT_BE_NEGATIVE_VALUE);
