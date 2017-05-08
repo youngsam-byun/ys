@@ -146,7 +146,8 @@ public class CategoryController {
 
         //contrived injection for testing, spring security mocking not retrieving pricipal
         //it should pull from spring security contextholder
-       principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal==null)
+            principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(bindingResult.hasErrors()) {
             modelAndView.setViewName(FOLDER+ PAGE_CREATE);
@@ -183,7 +184,8 @@ public class CategoryController {
 
         //contrived injection for testing, spring security mocking not retrieving pricipal
         //it should pull from spring security contextholder
-        principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal==null)
+            principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(UtilValidation.isNegativeInt(id))
             throw new CustomException(this.getClass(), UPDATE,ID_SHOULD_NOT_BE_NEGATIVE_VALUE);
@@ -206,7 +208,8 @@ public class CategoryController {
 
         //contrived injection for testing, spring security mocking not retrieving pricipal
         //it should pull from spring security contextholder
-        principal=(Principal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal==null)
+            principal=(Principal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(bindingResult.hasErrors()){
             modelAndView.setViewName(PAGE_UPDATE);
@@ -229,7 +232,8 @@ public class CategoryController {
 
         //contrived injection for testing, spring security mocking not retrieving pricipal
         //it should pull from spring security contextholder
-        principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal==null)
+            principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(UtilValidation.isNegativeInt(id))
             throw new CustomException(this.getClass(),DELETE,ID_SHOULD_NOT_BE_NEGATIVE_VALUE);

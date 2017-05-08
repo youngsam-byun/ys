@@ -38,7 +38,7 @@ public class UserController {
 
     private static final String USER = "user";
     private static final String UPDATE = "update";
-    private static final String SIGN_UP = "signUp";
+    private static final String SIGN_UP = "signup";
     private static final String UPDATE_PASSWORD = "updatePassword";
 
     private static final String PAGE_LOGIN = "/user_login";
@@ -146,7 +146,8 @@ public class UserController {
 
         //contrived injection for testing, spring security mocking not retrieving pricipal
         //it should pull from spring security contextholder
-        principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal==null)
+            principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Boolean b = userService.update(user, principal);
 
@@ -173,7 +174,8 @@ public class UserController {
 
         //contrived injection for testing, spring security mocking not retrieving pricipal
         //it should pull from spring security contextholder
-        principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal==null)
+            principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         passwordUpdateFormValidator.validate(passwordUpdateForm,bindingResult);
 

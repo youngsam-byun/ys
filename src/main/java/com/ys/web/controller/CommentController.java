@@ -144,7 +144,8 @@ public class CommentController {
 
         //contrived injection for testing, spring security mocking not retrieving pricipal
         //it should pull from spring security contextholder
-        principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal==null)
+            principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(bindingResult.hasErrors()) {
             modelAndView.setViewName(FOLDER+ PAGE_WRITE);
@@ -200,7 +201,8 @@ public class CommentController {
 
         //contrived injection for testing, spring security mocking not retrieving pricipal
         //it should pull from spring security contextholder
-        principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal==null)
+            principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(bindingResult.hasErrors()){
             modelAndView.setViewName(PAGE_UPDATE);
