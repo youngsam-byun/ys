@@ -16,12 +16,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
 
+
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ys.app.security.util.UtilSecurityContextTest.returnAuthentication;
+import static com.ys.app.security.util.UtilSecurityContextTest.returnPrincipal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -65,8 +66,8 @@ public class CommentServiceImplTest {
     public void B_writeComment_throwAccessDeniedException() {
 
         Comment actual = new Comment();
-        Authentication authentication = returnAuthentication(new User(), 0);
-        commentService.create(actual, authentication);
+        Principal principal = returnPrincipal(new User(), 0);
+        commentService.create(actual, principal);
         verify(commentRepository, times(0)).create(null);
         verifyNoMoreInteractions(commentRepository);
     }
@@ -94,8 +95,8 @@ public class CommentServiceImplTest {
         User user = new User();
         user.setId(1);
         Comment actual = new Comment();
-        Authentication authentication = returnAuthentication(user, 0);
-        commentService.update(actual, authentication);
+        Principal principal = returnPrincipal(user, 0);
+        commentService.update(actual, principal);
         verify(commentRepository, times(0)).update(null);
         verifyNoMoreInteractions(commentRepository);
     }
@@ -153,8 +154,8 @@ public class CommentServiceImplTest {
         public void A_writeComment_insertAndReturnTrue() {
             when(commentRepository.create(mockedComment)).thenReturn(1);
 
-            Authentication authentication = returnAuthentication(new User(), 1);
-            boolean b = commentService.create(mockedComment, authentication);
+            Principal principal = returnPrincipal(new User(), 1);
+            boolean b = commentService.create(mockedComment, principal);
             assertThat(b).isTrue();
             verify(commentRepository, times(1)).create(mockedComment);
             verifyNoMoreInteractions(commentRepository);
@@ -175,8 +176,8 @@ public class CommentServiceImplTest {
         public void C_updateComment_returnTrue() {
             when(commentRepository.update(mockedComment)).thenReturn(1);
 
-            Authentication authentication = returnAuthentication(new User(), 9);
-            boolean actual = commentService.update(mockedComment, authentication);
+            Principal principal = returnPrincipal(new User(), 9);
+            boolean actual = commentService.update(mockedComment, principal);
             assertThat(actual).isEqualTo(true);
             verify(commentRepository, times(1)).update(mockedComment);
             verifyNoMoreInteractions(commentRepository);
@@ -190,8 +191,8 @@ public class CommentServiceImplTest {
 
             User user = new User();
             user.setId(1);
-            Authentication authentication = returnAuthentication(user, 9);
-            boolean b = commentService.delete(1, authentication);
+            Principal principal = returnPrincipal(user, 9);
+            boolean b = commentService.delete(1, principal);
             assertThat(b).isTrue();
             verify(commentRepository, times(1)).read(1);
             verify(commentRepository, times(1)).delete(1);

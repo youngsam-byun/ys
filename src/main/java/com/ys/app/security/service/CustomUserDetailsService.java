@@ -62,12 +62,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     }
 
-    private static Collection<? extends GrantedAuthority> getAuthorities(User user) {
+    public static Collection<? extends GrantedAuthority> getAuthorities(User user) {
         Integer roleId=user.getRoleId();
         Set<GrantedAuthority> authorities = new HashSet<>();
 
         for(Role role:Role.values()){
-            if(roleId.equals(role.getId())){
+            if(roleId.equals(roleId)){
                 authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX+role.name()));
                 break;
             }

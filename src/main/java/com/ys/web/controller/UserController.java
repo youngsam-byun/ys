@@ -41,20 +41,22 @@ public class UserController {
     private static final String SIGN_UP = "signUp";
     private static final String UPDATE_PASSWORD = "updatePassword";
 
-    private static final String PAGE_LOGIN = "/user_login.jsp";
-    private static final String PAGE_WELCOME = "/user_welcome.jsp";
-    private static final String PAGE_SIGNUP = "/user_signUp.jsp";
-    private static final String PAGE_UPDATE= "/user_update.jsp";
-    private static final String PAGE_UPDATE_PASSWORD ="/user_updatePassword.jsp" ;
+    private static final String PAGE_LOGIN = "/user_login";
+    private static final String PAGE_WELCOME = "/user_welcome";
+    private static final String PAGE_SIGNUP = "/user_signup";
+    private static final String PAGE_UPDATE= "/user_update";
+    private static final String PAGE_UPDATE_PASSWORD ="/user_updatePassword" ;
+    private static final String PAGE_USER_LIST = "user_list";
+    private static final String PAGE_LIST_BY_SEARCH = "user_listBySearch";
+    private static final String PAGE_SEARCH = "/user_search";
 
-    private static final String PAGE_RESET_PASSWORD_EXPIRED = "/user_resetPasswordExpired.jsp";
+
+    private static final String PAGE_RESET_PASSWORD_EXPIRED = "/user_resetPasswordExpired";
     private static final String RESET_PASSWORD = "resetPassword";
     private static final String REDIRECT_USER_UPDATE_PASSWORD = "redirect:/user/updatePassword";
-    private static final String PAGE_USER_LIST = "user_list.jsp";
-    private static final String PAGE_LIST_BY_SEARCH = "user_listBySearch.jsp";
     private static final String USER_LIST = "userList";
-    private static final String PAGE_SEARCH = "/user_search.jsp";
     private static final String PAGINATION = "pagination";
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
 
     @Value("${userController.signUp.fail?:userController.signUp.fail}")
@@ -82,6 +84,8 @@ public class UserController {
     public UserController(UserService userService, PasswordUpdateFormValidator passwordUpdateFormValidator) {
         this.userService = userService;
         this.passwordUpdateFormValidator =passwordUpdateFormValidator;
+        if(pageSize==null)
+            pageSize= DEFAULT_PAGE_SIZE;
     }
 
 
@@ -106,7 +110,7 @@ public class UserController {
     }
 
     @PostMapping(value = {"/signup"})
-    private ModelAndView signUp(@ModelAttribute @Valid User user, BindingResult bindingResult, ModelAndView modelAndView, final Principal principal) {
+    private ModelAndView signUp(@ModelAttribute @Valid User user, BindingResult bindingResult, ModelAndView modelAndView) {
 
 
         if (bindingResult.hasErrors()) {

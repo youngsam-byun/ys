@@ -4,6 +4,7 @@ import com.ys.app.exception.CustomException;
 import com.ys.app.model.Category;
 import com.ys.app.security.factory.WithCustomMockUser;
 import com.ys.app.service.CategoryService;
+import com.ys.app.util.WithSecurityContextTestExcecutionListener;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -15,7 +16,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.test.context.web.ServletTestExecutionListener;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -74,7 +80,7 @@ public class CategoryControllerTest {
             mockMVC.perform(get("/category/list/1"))
                     .andDo(print())
                     .andExpect(status().isOk())
-            .andExpect(view().name("/category/category_list.jsp"));
+            .andExpect(view().name("/category/category_list"));
             verify(categoryService,times(1)).getList(1,10);
             verify(categoryService,times(1)).getPagination(1,10);
 
@@ -85,7 +91,7 @@ public class CategoryControllerTest {
     public  void D_home_ForwardToListingPage() throws Exception{
 
         mockMVC.perform(get("/category/list")).andExpect(status().isOk())
-                .andExpect(view().name("/category/category_list.jsp"));
+                .andExpect(view().name("/category/category_list"));
         verify(categoryService,times(1)).getList(1,10);
         verify(categoryService,times(1)).getPagination(1,10);
 
@@ -108,7 +114,7 @@ public class CategoryControllerTest {
     public  void F_read_return200() throws Exception {
         when(categoryService.read(431)).thenReturn(new Category());
         mockMVC.perform(get("/category/read/431")).andExpect(status().isOk())
-                .andExpect(view().name("/category/category_read.jsp"));
+                .andExpect(view().name("/category/category_read"));
         verify(categoryService,times(1)).read(431);
 
         verifyNoMoreInteractions(categoryService);
@@ -116,6 +122,7 @@ public class CategoryControllerTest {
 
 
     @Test
+    @WithCustomMockUser(id = 354,roleId = 1,username ="youngsam" )
     public  void G_delete_throwCustomException() throws Exception {
         try {
             mockMVC.perform(post("/category/delete/-1"));
@@ -126,9 +133,10 @@ public class CategoryControllerTest {
     }
 
     @Test
+    @WithCustomMockUser(id = 354,roleId = 1,username ="youngsam" )
     public  void H_getWrite_returnWriteJspPage() throws  Exception{
 
-        mockMVC.perform(get("/category/write")).andExpect(view().name("/category/category_write.jsp"));
+        mockMVC.perform(get("/category/create")).andExpect(view().name("/category/category_create"));
 
         verifyNoMoreInteractions(categoryService);
     }
@@ -136,14 +144,15 @@ public class CategoryControllerTest {
 
 
     @Test
-    public void J_write_returnValidationFailsForbody() throws Exception{
+    @WithCustomMockUser(id = 354,roleId = 1,username ="youngsam" )
+    public void J_create_returnValidationFailsForbody() throws Exception{
 
-        mockMVC.perform(post("/category/write").param("categoryId","1")
+        mockMVC.perform(post("/category/create").param("categoryId","1")
                 .param("no","100").param("level","0").param("sequence","0").param("title","ddddd")
                 .param("name","").param("userId","1").param("createTime","20/04/2017")
                 .param("updateTime","20/04/2017").param("noOfRead","0")
                 .param("deleted","false")
-        ).andExpect(view().name("/category/category_write.jsp"));
+        ).andExpect(view().name("/category/category_create"));
 
 
         verifyNoMoreInteractions(categoryService);
@@ -151,7 +160,8 @@ public class CategoryControllerTest {
 
 
     @Test
-    public void K_write_return200AndListPage() throws Exception{
+    @WithCustomMockUser(id = 354,roleId = 1,username ="youngsam" )
+    public void K_create_return200AndListPage() throws Exception{
 
         Category c=new Category();
         c.setId(0);
@@ -165,7 +175,7 @@ public class CategoryControllerTest {
         //when(categoryService.create(a, SecurityContextHolder.getContext())).thenReturn(true);
         when(categoryService.create(any(),any())).thenReturn(true);
 
-        mockMVC.perform(post("/category/write").param("categoryId","1").content(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+        mockMVC.perform(post("/category/create").param("categoryId","1").content(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .param("no","100").param("level","0").param("sequence","0").param("title","ttt")
                 .param("name","name").param("userId","1").param("createTime","2017/04/20")
                 .param("updateTime","2017/04/20").param("noOfRead","0")

@@ -16,14 +16,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ys.app.security.util.UtilSecurityContextTest.returnAuthentication;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.MINUTES;
+import static com.ys.app.security.util.UtilSecurityContextTest.returnPrincipal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -58,7 +56,7 @@ public class ArticleServiceImplTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void A_writeArticle_throwNullPointerException() {
+    public void A_createArticle_throwNullPointerException() {
 
         articleService.create(null, null);
         verify(articleRepository,times(0)).create(null);
@@ -67,12 +65,12 @@ public class ArticleServiceImplTest {
     }
 
     @Test(expected = AccessDeniedException.class)
-    public void B_writeArticle_throwAccessDeniedException() {
+    public void B_createArticle_throwAccessDeniedException() {
 
         Article actual = new Article();
-        Authentication authentication = returnAuthentication(new User(),0);
-        articleService.create(actual, authentication);
-        verify(articleRepository,times(0)).create(null);
+        Principal principal = returnPrincipal(new User(),0);
+        articleService.create(actual, principal);
+        //verify(articleRepository,times(0)).create(actual);
         verifyNoMoreInteractions(articleRepository);
     }
 
@@ -99,9 +97,9 @@ public class ArticleServiceImplTest {
         User user=new User();
         user.setId(1);
         Article actual = new Article();
-        Authentication authentication = returnAuthentication(user,0);
-        articleService.update(actual, authentication);
-        verify(articleRepository,times(0)).update(null);
+        Principal principal = returnPrincipal(user,0);
+        articleService.update(actual, principal);
+        //verify(articleRepository,times(0)).update(null);
         verifyNoMoreInteractions(articleRepository);
     }
 
@@ -161,11 +159,11 @@ public class ArticleServiceImplTest {
         }
 
         @Test
-        public void A_writeArticle_insertAndReturnTrue() {
+        public void A_createArticle_insertAndReturnTrue() {
             when(articleRepository.create(mockedArticle)).thenReturn(1);
 
-            Authentication authentication = returnAuthentication(new User(),1);
-            boolean b = articleService.create(mockedArticle, authentication);
+            Principal principal = returnPrincipal(new User(),1);
+            boolean b = articleService.create(mockedArticle, principal);
             assertThat(b).isTrue();
             verify(articleRepository,times(1)).create(mockedArticle);
             verifyNoMoreInteractions(articleRepository);
@@ -186,8 +184,8 @@ public class ArticleServiceImplTest {
         public  void C_updateArticle_returnTrue(){
             when(articleRepository.update(mockedArticle)).thenReturn(1);
 
-            Authentication authentication= returnAuthentication(new User(),9);
-            boolean actual= articleService.update(mockedArticle,authentication);
+            Principal principal= returnPrincipal(new User(),9);
+            boolean actual= articleService.update(mockedArticle,principal);
             assertThat(actual).isEqualTo(true);
             verify(articleRepository,times(1)).update(mockedArticle);
             verifyNoMoreInteractions(articleRepository);
@@ -202,8 +200,8 @@ public class ArticleServiceImplTest {
 
             User user=new User();
             user.setId(1);
-            Authentication authentication= returnAuthentication(user,9);
-            boolean b= articleService.delete(1,authentication);
+            Principal principal= returnPrincipal(user,9);
+            boolean b= articleService.delete(1,principal);
             assertThat(b).isTrue();
             verify(articleRepository,times(1)).read(1);
             verify(articleRepository,times(1)).delete(1);

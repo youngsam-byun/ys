@@ -77,45 +77,45 @@ public class UserControllerTest {
 
     @Test
     public  void B_home_return200() throws Exception {
-        mockMVC.perform(get("/user/login")).andExpect(status().isOk()).andExpect(view().name("/user/user_login.jsp"));
+        mockMVC.perform(get("/user/login")).andExpect(status().isOk()).andExpect(view().name("/user/user_login"));
         verifyNoMoreInteractions(userService);
     }
 
     @Test
     public  void C_getSignUp_return200() throws Exception {
-        mockMVC.perform(get("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signUp.jsp"));
+        mockMVC.perform(get("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signup"));
         verifyNoMoreInteractions(userService);
     }
 
     @Test
-    public  void D_signUp_validationFailsForEmailEmpty() throws Exception {
+    public  void D_signup_validationFailsForEmailEmpty() throws Exception {
         user.setPassword("password");
-        mockMVC.perform(post("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signUp.jsp"));
+        mockMVC.perform(post("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signup"));
         verifyNoMoreInteractions(userService);
     }
 
     @Test
-    public  void E_signUp_validationFailsEmailNotCorrectFormat() throws Exception {
+    public  void E_signup_validationFailsEmailNotCorrectFormat() throws Exception {
         user.setEmail("email.com");
-        mockMVC.perform(post("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signUp.jsp"));
+        mockMVC.perform(post("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signup"));
         verifyNoMoreInteractions(userService);
     }
 
     @Test
-    public  void F_signUp_validationFailsForPasswordEmpty() throws Exception {
+    public  void F_signup_validationFailsForPasswordEmpty() throws Exception {
         user.setEmail("email@email.com");
-        mockMVC.perform(post("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signUp.jsp"));
+        mockMVC.perform(post("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signup"));
         verifyNoMoreInteractions(userService);
     }
 
     @Test
-    public  void G_signUp_return301RedirectSuccessPage() throws Exception {
+    public  void G_signup_return301RedirectSuccessPage() throws Exception {
         user.setEmail("test@test.com");
         user.setPassword("password");
         user.setUsername("username");
         user.setPasswordConfirm("password");
 
-        when(userService.create(any(User.class),any(Authentication.class))).thenReturn(true);
+        when(userService.create(any(User.class))).thenReturn(true);
 
 
         mockMVC.perform(post("/user/signup")
@@ -127,13 +127,13 @@ public class UserControllerTest {
 
         ).andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/user/welcome"));
 
-        verify(userService,times(1)).create(any(User.class),any(Authentication.class));
+        verify(userService,times(1)).create(any(User.class));
         verifyNoMoreInteractions(userService);
     }
 
     @Test
     public  void H_getUpdate_return200() throws Exception {
-        mockMVC.perform(get("/user/update")).andExpect(status().isOk()).andExpect(view().name("/user/user_update.jsp"));
+        mockMVC.perform(get("/user/update")).andExpect(status().isOk()).andExpect(view().name("/user/user_update"));
         verifyNoMoreInteractions(userService);
     }
 
@@ -144,7 +144,7 @@ public class UserControllerTest {
         user.setUsername("username");
         mockMVC.perform(post("/user/update").param("email",user.getEmail())
         .param("username",user.getUsername())
-        ).andExpect(status().isOk()).andExpect(view().name("/user/user_update.jsp"));
+        ).andExpect(status().isOk()).andExpect(view().name("/user/user_update"));
         verifyNoMoreInteractions(userService);
     }
 
@@ -156,11 +156,12 @@ public class UserControllerTest {
         mockMVC.perform(post("/user/update")
         .param("username",user.getUsername())
         .param("password",user.getPassword())
-        ).andExpect(status().isOk()).andExpect(view().name("/user/user_update.jsp"));
+        ).andExpect(status().isOk()).andExpect(view().name("/user/user_update"));
         verifyNoMoreInteractions(userService);
     }
 
     @Test
+    @WithCustomMockUser(id = 354,roleId = 1,username ="youngsam" )
     public  void K_update_return301RedirectSuccessPage() throws Exception {
 
         when(userService.update(any(User.class),any(Authentication.class))).thenReturn(true);
@@ -186,14 +187,14 @@ public class UserControllerTest {
 
     @Test
     public  void L_getUpdatePassword_return200() throws Exception {
-        mockMVC.perform(get("/user/updatePassword")).andExpect(status().isOk()).andExpect(view().name("/user/user_updatePassword.jsp"));
+        mockMVC.perform(get("/user/updatePassword")).andExpect(status().isOk()).andExpect(view().name("/user/user_updatePassword"));
         verifyNoMoreInteractions(userService);
     }
 
 
     @Test
     public  void M_updatePassword_validationFailForPasswordNotMatch() throws Exception {
-        mockMVC.perform(get("/user/updatePassword")).andExpect(status().isOk()).andExpect(view().name("/user/user_updatePassword.jsp"));
+        mockMVC.perform(get("/user/updatePassword")).andExpect(status().isOk()).andExpect(view().name("/user/user_updatePassword"));
         verifyNoMoreInteractions(userService);
     }
 

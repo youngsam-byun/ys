@@ -31,10 +31,11 @@ import java.util.List;
 public class CommentController {
 
     private static final String FOLDER="/comment";
-    private static final String PAGE_LIST = "/comment_list.jsp";
-    private static final String PAGE_READ = "/comment_read.jsp";
-    private static final String PAGE_WRITE = "/comment_write.jsp";
-    private static final String PAGE_SEARCH = "comment_search.jsp";
+    private static final String PAGE_LIST = "/comment_list";
+    private static final String PAGE_READ = "/comment_read";
+    private static final String PAGE_WRITE = "/comment_create";
+    private static final String PAGE_SEARCH = "comment_search";
+    private static final String PAGE_UPDATE = "/comment_update";
 
     private static final String PAGINATION = "pagination";
     private static final String COMMENT_DTO_LIST= "commentDTOList";
@@ -45,10 +46,8 @@ public class CommentController {
     private static final String LIST = "list";
     private static final String REDIRECT_COMMENT_LIST_1 = "redirect:/comment/list/1";
     private static final String UPDATE = "update";
-    private static final String COMMENT_UPDATE_JSP = "/comment_update.jsp";
     private static final String NO_PERMISSION_TO_ACCESS_THIS_COMMENT = "No permission to access this comment";
-
-    private static final String PAGE_COMMENT_UPDATE = "/comment/update.jsp";
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
 
     @Value("${commentController.read.empty?:commentController.read.empty}")
@@ -81,6 +80,10 @@ public class CommentController {
     @Autowired
     private CommentController(CommentService commentService) {
         this.commentService = commentService;
+
+        if(pageSize==null)
+            pageSize= DEFAULT_PAGE_SIZE;
+
     }
 
 
@@ -187,7 +190,7 @@ public class CommentController {
             throw new CustomException(this.getClass(), UPDATE, NO_PERMISSION_TO_ACCESS_THIS_COMMENT);
 
         modelAndView.addObject(COMMENT_DTO,commentDTO);
-        modelAndView.setViewName(FOLDER+ COMMENT_UPDATE_JSP);
+        modelAndView.setViewName(FOLDER+ PAGE_UPDATE);
         return modelAndView;
     }
 
@@ -200,7 +203,7 @@ public class CommentController {
         principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(bindingResult.hasErrors()){
-            modelAndView.setViewName(PAGE_COMMENT_UPDATE);
+            modelAndView.setViewName(PAGE_UPDATE);
             return  modelAndView;
         }
 

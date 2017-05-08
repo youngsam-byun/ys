@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
@@ -30,11 +31,12 @@ import java.util.List;
 public class CategoryController {
 
     private static final String FOLDER="/category";
-    private static final String PAGE_LIST = "/category_list.jsp";
-    private static final String PAGE_READ = "/category_read.jsp";
-    private static final String PAGE_CREATE = "/category_create.jsp";
-    private static final String PAGE_SEARCH = "category_search.jsp";
-    private static final String PAGE_UPDATE = "/category_update.jsp";
+    private static final String PAGE_LIST = "/category_list";
+    private static final String PAGE_READ = "/category_read";
+    private static final String PAGE_CREATE = "/category_create";
+    private static final String PAGE_SEARCH = "category_search";
+    private static final String PAGE_UPDATE = "/category_update";
+
 
     private static final String PAGINATION = "pagination";
     private static final String CATEGORY_LIST= "categoryList";
@@ -46,8 +48,8 @@ public class CategoryController {
     private static final String UPDATE = "update";
     private static final String NO_PERMISSION_TO_ACCESS_THIS_CATEGORY = "No permission to access this category";
 
-    private static final String PAGE_CATEGORY_UPDATE = "/category/update.jsp";
     private static final String CATEGORY = "category";
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
 
     @Value("${categoryController.read.empty?:categoryController.read.empty}")
@@ -79,7 +81,11 @@ public class CategoryController {
 
     @Autowired
     private CategoryController(CategoryService categoryService) {
+
         this.categoryService = categoryService;
+        if(pageSize==null)
+            pageSize= DEFAULT_PAGE_SIZE;
+
     }
 
 
@@ -140,7 +146,7 @@ public class CategoryController {
 
         //contrived injection for testing, spring security mocking not retrieving pricipal
         //it should pull from spring security contextholder
-        principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+       principal=(Principal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(bindingResult.hasErrors()) {
             modelAndView.setViewName(FOLDER+ PAGE_CREATE);
@@ -203,7 +209,7 @@ public class CategoryController {
         principal=(Principal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(bindingResult.hasErrors()){
-            modelAndView.setViewName(PAGE_CATEGORY_UPDATE);
+            modelAndView.setViewName(PAGE_UPDATE);
             return  modelAndView;
         }
 

@@ -75,7 +75,7 @@ public class ArticleControllerTest {
             mockMVC.perform(get("/article/list/1"))
                     .andDo(print())
                     .andExpect(status().isOk())
-            .andExpect(view().name("/article/article_list.jsp"));
+            .andExpect(view().name("/article/article_list"));
             verify(articleService,times(1)).getList(1,10);
             verify(articleService,times(1)).getPagination(1,10);
 
@@ -86,7 +86,7 @@ public class ArticleControllerTest {
     public  void D_home_ForwardToListingPage() throws Exception{
 
         mockMVC.perform(get("/article/list")).andExpect(status().isOk())
-                .andExpect(view().name("/article/article_list.jsp"));
+                .andExpect(view().name("/article/article_list"));
         verify(articleService,times(1)).getList(1,10);
         verify(articleService,times(1)).getPagination(1,10);
 
@@ -109,7 +109,7 @@ public class ArticleControllerTest {
     public  void F_read_return200() throws Exception {
         when(articleService.read(431)).thenReturn(new ArticleDTO());
         mockMVC.perform(get("/article/read/431")).andExpect(status().isOk())
-                .andExpect(view().name("/article/article_read.jsp"));
+                .andExpect(view().name("/article/article_read"));
         verify(articleService,times(1)).read(431);
 
         verifyNoMoreInteractions(articleService);
@@ -129,34 +129,36 @@ public class ArticleControllerTest {
     @Test
     public  void H_getWrite_returnWriteJspPage() throws  Exception{
 
-        mockMVC.perform(get("/article/write")).andExpect(view().name("/article/article_write.jsp"));
+        mockMVC.perform(get("/article/create")).andExpect(view().name("/article/article_create"));
 
         verifyNoMoreInteractions(articleService);
     }
 
     @Test
-    public void I_write_returnValidationFailsFortitle() throws Exception{
+    @WithCustomMockUser(id = 354,roleId = 1,username ="youngsam" )
+    public void I_create_returnValidationFailsFortitle() throws Exception{
 
-        mockMVC.perform(post("/article/write").param("categoryId","1")
+        mockMVC.perform(post("/article/create").param("categoryId","1")
         .param("no","100").param("level","0").param("sequence","0").param("title","")
                 .param("body","body").param("userId","1").param("createTime","20/04/2017")
                         .param("updateTime","20/04/2017").param("noOfRead","0")
                 .param("deleted","false")
-        ).andExpect(view().name("/article/article_write.jsp"));
+        ).andExpect(view().name("/article/article_create"));
 
         verifyNoMoreInteractions(articleService);
     }
 
 
     @Test
-    public void J_write_returnValidationFailsForbody() throws Exception{
+    @WithCustomMockUser(id = 354,roleId = 1,username ="youngsam" )
+    public void J_create_returnValidationFailsForbody() throws Exception{
 
-        mockMVC.perform(post("/article/write").param("categoryId","1")
+        mockMVC.perform(post("/article/create").param("categoryId","1")
                 .param("no","100").param("level","0").param("sequence","0").param("title","ddddd")
                 .param("body","").param("userId","1").param("createTime","20/04/2017")
                 .param("updateTime","20/04/2017").param("noOfRead","0")
                 .param("deleted","false")
-        ).andExpect(view().name("/article/article_write.jsp"));
+        ).andExpect(view().name("/article/article_create"));
 
 
         verifyNoMoreInteractions(articleService);
@@ -164,7 +166,8 @@ public class ArticleControllerTest {
 
 
     @Test
-    public void K_write_return200AndListPage() throws Exception{
+    @WithCustomMockUser(id = 354,roleId = 1,username ="youngsam" )
+    public void K_create_return200AndListPage() throws Exception{
 
         Article a=new Article();
         a.setId(0);
@@ -182,7 +185,7 @@ public class ArticleControllerTest {
         //when(articleService.create(a, SecurityContextHolder.getContext())).thenReturn(true);
         when(articleService.create(any(),any())).thenReturn(true);
 
-        mockMVC.perform(post("/article/write").param("categoryId","1").content(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+        mockMVC.perform(post("/article/create").param("categoryId","1").content(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .param("no","100").param("level","0").param("sequence","0").param("title","ttt")
                 .param("body","body").param("userId","1").param("createTime","2017/04/20")
                 .param("updateTime","2017/04/20").param("noOfRead","0")

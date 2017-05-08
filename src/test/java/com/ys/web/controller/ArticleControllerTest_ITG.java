@@ -82,7 +82,7 @@ public class ArticleControllerTest_ITG {
             mockMvc.perform(get("/article/list/1"))
                     .andDo(print())
                     .andExpect(status().isOk())
-            .andExpect(view().name("/article/article_list.jsp"));
+            .andExpect(view().name("/article/article_list"));
 
     }
 
@@ -90,7 +90,7 @@ public class ArticleControllerTest_ITG {
     public  void D_home_ForwardToListingPage() throws Exception{
 
         mockMvc.perform(get("/article/list")).andExpect(status().isOk())
-                .andExpect(view().name("/article/article_list.jsp"));
+                .andExpect(view().name("/article/article_list"));
 
     }
 
@@ -109,7 +109,7 @@ public class ArticleControllerTest_ITG {
     public  void F_read_return200() throws Exception {
 
         mockMvc.perform(get("/article/read/1")).andExpect(status().isOk())
-                .andExpect(view().name("/article/article_read.jsp"));
+                .andExpect(view().name("/article/article_read"));
 
     }
 
@@ -127,7 +127,7 @@ public class ArticleControllerTest_ITG {
     @WithCustomMockUser(id = 354,roleId = 1,username ="youngsam" )
     public  void H_getWrite_returnWriteJspPage() throws  Exception{
 
-        mockMvc.perform(get("/article/create")).andExpect(view().name("/article/article_create.jsp"));
+        mockMvc.perform(get("/article/create")).andExpect(view().name("/article/article_create"));
 
 
     }
@@ -141,7 +141,7 @@ public class ArticleControllerTest_ITG {
                 .param("body","body").param("userId","1").param("createTime","20/04/2017")
                         .param("updateTime","20/04/2017").param("noOfRead","0")
                 .param("deleted","false")
-        ).andExpect(view().name("/article/article_create.jsp"));
+        ).andExpect(view().name("/article/article_create"));
 
 
     }
@@ -156,7 +156,7 @@ public class ArticleControllerTest_ITG {
                 .param("body","").param("userId","1").param("createTime","20/04/2017")
                 .param("updateTime","20/04/2017").param("noOfRead","0")
                 .param("deleted","false")
-        ).andExpect(view().name("/article/article_create.jsp"));
+        ).andExpect(view().name("/article/article_create"));
 
 
     }

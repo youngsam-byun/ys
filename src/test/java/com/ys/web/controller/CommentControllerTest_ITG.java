@@ -73,7 +73,7 @@ public class CommentControllerTest_ITG {
             mockMvc.perform(get("/comment/list/1"))
                     .andDo(print())
                     .andExpect(status().isOk())
-            .andExpect(view().name("/comment/comment_list.jsp"));
+            .andExpect(view().name("/comment/comment_list"));
 
     }
 
@@ -81,7 +81,7 @@ public class CommentControllerTest_ITG {
     public  void D_home_ForwardToListingPage() throws Exception{
 
         mockMvc.perform(get("/comment/list")).andExpect(status().isOk())
-                .andExpect(view().name("/comment/comment_list.jsp"));
+                .andExpect(view().name("/comment/comment_list"));
 
     }
 
@@ -100,7 +100,7 @@ public class CommentControllerTest_ITG {
     public  void F_read_return200() throws Exception {
 
         mockMvc.perform(get("/comment/read/1")).andExpect(status().isOk())
-                .andExpect(view().name("/comment/comment_read.jsp"));
+                .andExpect(view().name("/comment/comment_read"));
 
 
     }
@@ -121,7 +121,7 @@ public class CommentControllerTest_ITG {
     @WithCustomMockUser(id = 354,roleId = 9,username ="youngsam" )
     public  void H_getCreate_returnWriteJspPage() throws  Exception{
 
-        mockMvc.perform(get("/comment/create")).andExpect(view().name("/comment/comment_write.jsp"));
+        mockMvc.perform(get("/comment/create")).andExpect(view().name("/comment/comment_create"));
 
 
     }
@@ -137,7 +137,7 @@ public class CommentControllerTest_ITG {
                 .param("body","").param("userId","1").param("createTime","20/04/2017")
                 .param("updateTime","20/04/2017").param("noOfRead","0")
                 .param("deleted","false")
-        ).andExpect(view().name("/comment/comment_write.jsp"));
+        ).andExpect(view().name("/comment/comment_create"));
 
 
 

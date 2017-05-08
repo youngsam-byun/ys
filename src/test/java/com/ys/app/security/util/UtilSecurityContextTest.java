@@ -1,12 +1,15 @@
 package com.ys.app.security.util;
 
 import com.ys.app.model.User;
+import com.ys.app.security.CustomUserDetails;
+import com.ys.app.security.service.CustomUserDetailsService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.security.Principal;
 import java.util.Collection;
 
 /**
@@ -14,9 +17,12 @@ import java.util.Collection;
  */
 public class UtilSecurityContextTest {
 
-    public static Authentication returnAuthentication(User user, int roleId) {
+    public static Principal returnPrincipal(User user, int roleId) {
 
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken("userName", "password");
+
+
+        user.setRoleId(roleId);
 
         // Authenticate the user
         Authentication authentication = new Authentication() {
@@ -38,13 +44,15 @@ public class UtilSecurityContextTest {
             @Override
             public Object getDetails() {
 
-                user.setRoleId(roleId);
+
                 return user;
             }
 
             @Override
             public Object getPrincipal() {
-                return null;
+
+                CustomUserDetails customUserDetails=new CustomUserDetails(user, CustomUserDetailsService.getAuthorities(user));
+                return customUserDetails;
             }
 
             @Override
@@ -61,6 +69,6 @@ public class UtilSecurityContextTest {
         authRequest.setDetails(user);
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authentication);
-        return securityContext.getAuthentication();
+        return (Principal)securityContext.getAuthentication().getPrincipal();
     }
 }

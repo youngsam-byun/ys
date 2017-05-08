@@ -30,10 +30,11 @@ import java.util.List;
 public class ArticleController {
 
     private static final String FOLDER="/article";
-    private static final String PAGE_LIST = "/article_list.jsp";
-    private static final String PAGE_READ = "/article_read.jsp";
-    private static final String PAGE_CREATE = "/article_create.jsp";
-    private static final String PAGE_SEARCH = "article_search.jsp";
+    private static final String PAGE_LIST = "/article_list";
+    private static final String PAGE_READ = "/article_read";
+    private static final String PAGE_CREATE = "/article_create";
+    private static final String PAGE_SEARCH = "/article_search";
+    private static final String PAGE_UPDATE = "/article_update";
 
     private static final String PAGINATION = "pagination";
     private static final String ARTICLE_DTO_LIST= "articleDTOList";
@@ -44,10 +45,8 @@ public class ArticleController {
     private static final String LIST = "list";
     private static final String REDIRECT_ARTICLE_LIST_1 = "redirect:/article/list/1";
     private static final String UPDATE = "update";
-    private static final String ARTICLE_UPDATE_JSP = "/article_update.jsp";
-    private static final String NO_PERMISSION_TO_ACCESS_THIS_ARTICLE = "No permission to access this article";
 
-    private static final String PAGE_ARTICLE_UPDATE = "/article/update.jsp";
+    private static final String NO_PERMISSION_TO_ACCESS_THIS_ARTICLE = "No permission to access this article";
 
 
     @Value("${articleController.read.empty?:articleController.read.empty}")
@@ -191,7 +190,7 @@ public class ArticleController {
             throw new CustomException(this.getClass(), UPDATE, NO_PERMISSION_TO_ACCESS_THIS_ARTICLE);
 
         modelAndView.addObject(ARTICLE_DTO,articleDTO);
-        modelAndView.setViewName(FOLDER+ ARTICLE_UPDATE_JSP);
+        modelAndView.setViewName(FOLDER+ PAGE_UPDATE);
         return modelAndView;
     }
 
@@ -205,7 +204,7 @@ public class ArticleController {
 
 
         if(bindingResult.hasErrors()){
-            modelAndView.setViewName(PAGE_ARTICLE_UPDATE);
+            modelAndView.setViewName(PAGE_UPDATE);
             return  modelAndView;
         }
 

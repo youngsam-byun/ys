@@ -80,7 +80,7 @@ public class CategoryControllerTest_ITG {
             mockMvc.perform(get("/category/list/1"))
                     .andDo(print())
                     .andExpect(status().isOk())
-            .andExpect(view().name("/category/category_list.jsp"));
+            .andExpect(view().name("/category/category_list"));
 
     }
 
@@ -88,7 +88,7 @@ public class CategoryControllerTest_ITG {
     public  void D_home_ForwardToListingPage() throws Exception{
 
         mockMvc.perform(get("/category/list")).andExpect(status().isOk())
-                .andExpect(view().name("/category/category_list.jsp"));
+                .andExpect(view().name("/category/category_list"));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class CategoryControllerTest_ITG {
     @Test
     public  void F_read_return200() throws Exception {
         mockMvc.perform(get("/category/read/1")).andExpect(status().isOk())
-                .andExpect(view().name("/category/category_read.jsp"));
+                .andExpect(view().name("/category/category_read"));
 
     }
 
@@ -123,7 +123,7 @@ public class CategoryControllerTest_ITG {
     @Test
     public  void H_getWrite_returnWriteJspPage() throws  Exception{
 
-        mockMvc.perform(get("/category/create")).andExpect(view().name("/category/category_create.jsp"));
+        mockMvc.perform(get("/category/create")).andExpect(view().name("/category/category_create"));
 
     }
 
@@ -138,7 +138,7 @@ public class CategoryControllerTest_ITG {
                 .param("name","").param("userId","1").param("createTime","20/04/2017")
                 .param("updateTime","20/04/2017").param("noOfRead","0")
                 .param("deleted","false")
-        ).andExpect(view().name("/category/category_create.jsp"));
+        ).andExpect(view().name("/category/category_create"));
 
     }
 
@@ -154,9 +154,6 @@ public class CategoryControllerTest_ITG {
         c.setUpdateTime(new GregorianCalendar(2017,04,20).getTime());
         c.setDeleted(false);
 
-
-
-
         mockMvc.perform(post("/category/create").param("categoryId","1").content(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .param("no","100").param("level","0").param("sequence","0").param("title","ttt")
                 .param("name","name").param("userId","1").param("createTime","2017/04/20")
@@ -169,12 +166,9 @@ public class CategoryControllerTest_ITG {
     @Test
     public  void L_getListBySearch_return200RedirectToHome() throws Exception {
 
-
-
         mockMvc.perform(post("/category/search")
                 .param("key","name").param("value","cate")
         ).andExpect(status().isOk()).andExpect(model().attributeExists("categoryList"));
-
 
     }
 
@@ -183,8 +177,8 @@ public class CategoryControllerTest_ITG {
     public  void M_updateCategory_return200() throws  Exception{
 
         Category c=new Category();
-        c.setId(0);
-        c.setName("name");
+        c.setId(1);
+        c.setName("rename");
         c.setCreateTime(new GregorianCalendar(2017,04,20).getTime());
         c.setUpdateTime(new GregorianCalendar(2017,04,20).getTime());
         c.setDeleted(false);
@@ -194,8 +188,9 @@ public class CategoryControllerTest_ITG {
         //when(categoryService.create(a, SecurityContextHolder.getContext())).thenReturn(true);
 
 
-        mockMvc.perform(post("/category/update").param("id","1").content(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .param("name","name").param("userId","1").param("createTime","2017/04/20")
+        mockMvc.perform(post("/category/update").content(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .param("id",String.valueOf(c.getId()))
+                .param("name",c.getName()).param("userId","1").param("createTime","2017/04/20")
                 .param("updateTime","2017/04/20")
                 .param("deleted","false")
         ).andDo(print()).andExpect(redirectedUrl("/category/list/1"));

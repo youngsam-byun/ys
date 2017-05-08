@@ -70,39 +70,39 @@ public class UserControllerTest_ITG {
 
     @Test
     public  void B_home_return200() throws Exception {
-        mockMvc.perform(get("/user/login")).andExpect(status().isOk()).andExpect(view().name("/user/user_login.jsp"));
+        mockMvc.perform(get("/user/login")).andExpect(status().isOk()).andExpect(view().name("/user/user_login"));
 
     }
 
     @Test
     public  void C_getSignUp_return200() throws Exception {
-        mockMvc.perform(get("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signUp.jsp"));
+        mockMvc.perform(get("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signup"));
 
     }
 
     @Test
-    public  void D_signUp_validationFailsForEmailEmpty() throws Exception {
+    public  void D_signup_validationFailsForEmailEmpty() throws Exception {
         user.setPassword("password");
-        mockMvc.perform(post("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signUp.jsp"));
+        mockMvc.perform(post("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signup"));
 
     }
 
     @Test
-    public  void E_signUp_validationFailsEmailNotCorrectFormat() throws Exception {
+    public  void E_signup_validationFailsEmailNotCorrectFormat() throws Exception {
         user.setEmail("email.com");
-        mockMvc.perform(post("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signUp.jsp"));
+        mockMvc.perform(post("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signup"));
 
     }
 
     @Test
-    public  void F_signUp_validationFailsForPasswordEmpty() throws Exception {
+    public  void F_signup_validationFailsForPasswordEmpty() throws Exception {
         user.setEmail("email@email.com");
-        mockMvc.perform(post("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signUp.jsp"));
+        mockMvc.perform(post("/user/signup")).andExpect(status().isOk()).andExpect(view().name("/user/user_signup"));
     }
 
     @Test
     @Transactional
-    public  void G_signUp_return301RedirectSuccessPage() throws Exception {
+    public  void G_signup_return301RedirectSuccessPage() throws Exception {
         user.setEmail("test3@test.com");
         user.setUsername("username");
         user.setPassword("password");
@@ -123,7 +123,7 @@ public class UserControllerTest_ITG {
 
     @Test
     public  void H_getUpdate_return200() throws Exception {
-        mockMvc.perform(get("/user/update")).andExpect(status().isOk()).andExpect(view().name("/user/user_update.jsp"));
+        mockMvc.perform(get("/user/update")).andExpect(status().isOk()).andExpect(view().name("/user/user_update"));
     }
 
 
@@ -133,7 +133,7 @@ public class UserControllerTest_ITG {
         user.setUsername("username");
         mockMvc.perform(post("/user/update").param("email",user.getEmail())
                 .param("username",user.getUsername())
-        ).andExpect(status().isOk()).andExpect(view().name("/user/user_update.jsp"));
+        ).andExpect(status().isOk()).andExpect(view().name("/user/user_update"));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class UserControllerTest_ITG {
         mockMvc.perform(post("/user/update")
                 .param("username",user.getUsername())
                 .param("password",user.getPassword())
-        ).andExpect(status().isOk()).andExpect(view().name("/user/user_update.jsp"));
+        ).andExpect(status().isOk()).andExpect(view().name("/user/user_update"));
     }
 
     @Test
@@ -173,13 +173,13 @@ public class UserControllerTest_ITG {
 
     @Test
     public  void L_getUpdatePassword_return200() throws Exception {
-        mockMvc.perform(get("/user/updatePassword")).andExpect(status().isOk()).andExpect(view().name("/user/user_updatePassword.jsp"));
+        mockMvc.perform(get("/user/updatePassword")).andExpect(status().isOk()).andExpect(view().name("/user/user_updatePassword"));
     }
 
 
     @Test
     public  void M_updatePassword_validationFailForPasswordNotMatch() throws Exception {
-        mockMvc.perform(get("/user/updatePassword")).andExpect(status().isOk()).andExpect(view().name("/user/user_updatePassword.jsp"));
+        mockMvc.perform(get("/user/updatePassword")).andExpect(status().isOk()).andExpect(view().name("/user/user_updatePassword"));
     }
 
     public static class MockSecurityContext implements SecurityContext {
