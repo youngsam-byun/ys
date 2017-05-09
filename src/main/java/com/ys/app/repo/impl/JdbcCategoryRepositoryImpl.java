@@ -22,12 +22,16 @@ public class JdbcCategoryRepositoryImpl extends BaseRepository<Category> impleme
     private static final String TABLE_NAME = "Category";
     private static final String CATEGORY_INS = "Category_INS";
     private static final String CATEGORY_UPD = "Category_UPD";
-    private static final String PAGE_NO = "pageNo";
-    private static final String PAGE_SIZE = "pageSize";
     private static final String G_LIST_BY_SEARCH = "G_getListBySearch";
     private static final String GET_LIST = "G_getList";
-    private static final String KEYWORD = "keyword";
     private static final String G_GET_TOTAL = "G_getTotal";
+    private static final String G_GET_TOTAL_BY_SEARCH = "G_getTotalBySearch";
+
+    private static final String PAGE_NO = "pageNo";
+    private static final String PAGE_SIZE = "pageSize";
+    private static final String KEYWORD = "keyword";
+
+
     private static final String CATEGORY_CREATE_TBL_ARTICLE = "Category_create_TBL_Article";
     private static final String CATEGORY_CREATE_TBL_COMMENT = "Category_create_TBL_Comment";
     private static final String CATEGORY_RENAME_TBL_ARTICLE = "Category_rename_TBL_Article";
@@ -84,12 +88,12 @@ public class JdbcCategoryRepositoryImpl extends BaseRepository<Category> impleme
 
     @Override
     public int getTotal() {
-        return super.getTotal(G_GET_TOTAL);
+        return super.getTotal(G_GET_TOTAL_BY_SEARCH);
     }
 
     @Override
     public int getTotalBySearch(String keyword) {
-        return super.getTotal(G_GET_TOTAL, new AbstractMap.SimpleEntry<>(KEYWORD, keyword));
+        return super.getTotal(G_GET_TOTAL_BY_SEARCH, new AbstractMap.SimpleEntry<>(KEYWORD, keyword));
     }
 
     @Override

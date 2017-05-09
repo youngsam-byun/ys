@@ -21,17 +21,18 @@ public class JdbcCommentRepositoryImpl extends BaseRepository<Comment> implement
 
     private static final String TABLE_NAME = "Comment";
     private static final String COMMENT_INS = "Comment_INS";
+    private static final String COMMENT_READ = "Comment_READ";
     private static final String COMMENT_UPD = "Comment_UPD";
+
+    private static final String COMMENT_LIST = "Comment_LIST";
+    private static final String COMMENT_LISTBYSEARCH = "Comment_LISTBYSEARCH";
+    private static final String COMMENT_GET_TOTAL = "Comment_getTotal";
+    private static final String COMMENT_GET_TOTAL_BY_SEARCH = "Comment_getTotalBySearch";
+
+    private static final String ID = "id";
     private static final String PAGE_NO = "pageNo";
     private static final String PAGE_SIZE = "pageSize";
-    private static final String COMMENT_LIST = "Comment_LIST";
-    private static final String G_GET_TOTAL = "G_getTotal";
-    private static final String ID = "id";
-    private static final String COMMENT_READ = "Comment_READ";
-
-    private static final String G_GET_TOTAL_BY_SEARCH = "G_getTotalBySearch";
     private static final String KEYWORD="keyword";
-    public static final String G_GET_LIST_BY_SEARCH = "G_getListBySearch";
 
 
     @Autowired
@@ -74,17 +75,17 @@ public class JdbcCommentRepositoryImpl extends BaseRepository<Comment> implement
 
     @Override
     public int getTotal() {
-        return super.getTotal(G_GET_TOTAL);
+        return super.getTotal(COMMENT_GET_TOTAL);
     }
 
     @Override
     public int getTotalBySearch(String keyword) {
-        return super.getTotal(G_GET_TOTAL_BY_SEARCH,new SimpleEntry<>(KEYWORD,keyword));
+        return super.getTotal(COMMENT_GET_TOTAL_BY_SEARCH,new SimpleEntry<>(KEYWORD,keyword));
     }
 
     @Override
     public List<Comment> getListBySearch(int pageNo, int pageSize, String keyword) {
-        return super.getList(G_GET_LIST_BY_SEARCH, new SimpleEntry<>(PAGE_NO, pageNo),
+        return super.getList(COMMENT_LISTBYSEARCH, new SimpleEntry<>(PAGE_NO, pageNo),
                 new SimpleEntry<>(PAGE_SIZE, pageSize),
                 new SimpleEntry<>(KEYWORD, keyword));
     }

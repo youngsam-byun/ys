@@ -22,16 +22,18 @@ public class JdbcArticleRepositoryImpl extends BaseRepository<Article> implement
 
     private static final String TABLE_NAME = "Article";
     private static final String ARTICLE_INS = "Article_INS";
+    private static final String ARTICLE_READ = "Article_READ";
     private static final String ARTICLE_UPD = "Article_UPD";
+    private static final String ARTICLE_LIST = "Article_LIST";
+    private static final String ARTICLE_LISTBYSEARCH = "Article_LISTBYSEARCH";
+    private static final String G_GET_TOTAL = "Article_getTotal";
+    private static final String G_GET_TOTAL_BY_SEARCH = "Article_getTotalBySearch";
+
+
     private static final String PAGE_NO = "pageNo";
     private static final String PAGE_SIZE = "pageSize";
-    private static final String ARTICLE_LISTBYSEARCH = "Article_LISTBYSEARCH";
-    private static final String ARTICLE_LIST = "Article_LIST";
     private static final String KEYWORD = "keyword";
-    private static final String G_GET_TOTAL = "G_getTotal";
-    private static final String G_GET_TOTAL_BY_SEARCH = "G_getTotalBySearch";
     private static final String ID = "id";
-    private static final String ARTICLE_READ = "Article_READ";
 
 
 

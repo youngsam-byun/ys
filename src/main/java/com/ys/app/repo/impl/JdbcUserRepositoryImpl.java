@@ -21,20 +21,23 @@ public class JdbcUserRepositoryImpl extends BaseRepository<User> implements User
 
     private static final String TABLE_NAME = "User";
     private static final String USER_INS = "User_INS";
+    private static final String USER_READ_BY_EMAIL = "User_readByEmail";
     private static final String USER_UPD = "User_UPD";
+    private static final String USER_UPD_PWD = "User_UPD_PWD";
+    private static final String USER_UPD_TRIAL = "User_UPD_Trial";
+
     private static final String G_GET_LIST = "G_getList";
+    private static final String GET_LIST_BY_SEARCH = "G_getListBySearch";
+    private static final String G_GET_TOTAL = "G_getTotal";
+    private static final String G_GET_TOTAL_BY_SEARCH = "G_getTotalBySearch";
+
+    private static final String EMAIL = "email";
+    private static final String UPDATE_TIME = "updateTime";
+    private static final String STR = "str";
+
     private static final String PAGE_SIZE = "pageSize";
     private static final String PAGE_NO = "pageNo";
     private static final String KEYWORD = "keyword";
-    private static final String G_GET_TOTAL = "G_getTotal";
-    private static final String G_GET_TOTAL_BY_SEARCH = "G_getTotalBySearch";
-    private static final String USER_UPD_PWD = "User_UPD_PWD";
-    private static final String USER_UPD_TRIAL = "User_UPD_Trial";
-    private static final String GET_LIST_BY_SEARCH = "G_getListBySearch";
-    private static final String EMAIL = "email";
-    private static final String UPDATE_TIME = "updateTime";
-    private static final String USER_READ_BY_EMAIL = "User_readByEmail";
-    private static final String STR = "str";
 
     @Autowired
     public JdbcUserRepositoryImpl(DataSource dataSource) {
