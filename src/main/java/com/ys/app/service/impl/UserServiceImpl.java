@@ -3,7 +3,6 @@ package com.ys.app.service.impl;
 import com.ys.app.model.Role;
 import com.ys.app.model.User;
 import com.ys.app.repo.UserRepository;
-import com.ys.app.security.CustomUserDetails;
 import com.ys.app.service.UserService;
 import com.ys.app.util.UtilPagination;
 import com.ys.app.util.UtilValidation;
@@ -17,6 +16,8 @@ import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 
+import static com.ys.app.security.service.CustomUserDetailsService.extractUser;
+
 /**
  * Created by byun.ys on 4/20/2017.
  */
@@ -24,11 +25,11 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
 
-    @Value("${userService.update.noPermission}")
-    private static final String NO_PERMISSION_TO_UPDATE_USER = "userService.updateUser.noPermission";
+    @Value("${userService.update.noPermission?:userService.update.noPermission}")
+    private  String NO_PERMISSION_TO_UPDATE_USER;// = "userService.updateUser.noPermission";
 
-    @Value("${userService.create.noPermission}")
-    private final String NO_PERMISSION_TO_CREATE_USER = "userService.createUser.noPermission";
+    @Value("${userService.create.noPermission?:userService.update.noPermission}")
+    private  String NO_PERMISSION_TO_CREATE_USER;// = "userService.createUser.noPermission";
 
     private UserRepository userRepository;
     private Role role;
@@ -188,13 +189,13 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean hasCreatePermission(Principal principal, Role role) {
-        User user = getUser(principal);
+        User user = extractUser(principal);
         int roleId = user.getRoleId();
         return roleId >= role.getId();
     }
 
     private boolean hasUpdatePermission(Principal principal, Role role, User u) {
-        User user = getUser(principal);
+        User user = extractUser(principal);
         int id = user.getId();
         int roleId = user.getRoleId();
 
@@ -204,16 +205,12 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean hasDeletePermission(Principal principal, Role role, Integer userId) {
-        User user = getUser(principal);
+        User user = extractUser(principal);
         int id = user.getId();
         int roleId = user.getRoleId();
 
         return id == userId || roleId >= role.getId();
     }
 
-    private User getUser(Principal principal) {
-        return ((CustomUserDetails) principal).getUser();
-    }
-
-
+    
 }

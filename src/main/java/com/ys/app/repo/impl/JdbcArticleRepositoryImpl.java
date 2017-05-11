@@ -26,8 +26,8 @@ public class JdbcArticleRepositoryImpl extends BaseRepository<Article> implement
     private static final String ARTICLE_UPD = "Article_UPD";
     private static final String ARTICLE_LIST = "Article_LIST";
     private static final String ARTICLE_LISTBYSEARCH = "Article_LISTBYSEARCH";
-    private static final String G_GET_TOTAL = "Article_getTotal";
-    private static final String G_GET_TOTAL_BY_SEARCH = "Article_getTotalBySearch";
+    private static final String ARTICLE_TOTAL = "Article_TOTAL";
+    private static final String ARTICLE_TOTALBYSEARCH = "Article_TOTALBYSEARCH";
 
 
     private static final String PAGE_NO = "pageNo";
@@ -83,12 +83,12 @@ public class JdbcArticleRepositoryImpl extends BaseRepository<Article> implement
 
     @Override
     public int getTotal() {
-        return super.getTotal(G_GET_TOTAL);
+        return super.getTotal(ARTICLE_TOTAL);
     }
 
     @Override
     public int getTotalBySearch(String keyword) {
-        return super.getTotal(G_GET_TOTAL_BY_SEARCH,new SimpleEntry<>(KEYWORD,keyword));
+        return super.getTotal(ARTICLE_TOTALBYSEARCH,new SimpleEntry<>(KEYWORD,keyword));
     }
 
 }

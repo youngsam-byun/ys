@@ -88,7 +88,7 @@ public class JdbcCategoryRepositoryImpl extends BaseRepository<Category> impleme
 
     @Override
     public int getTotal() {
-        return super.getTotal(G_GET_TOTAL_BY_SEARCH);
+        return super.getTotal(G_GET_TOTAL);
     }
 
     @Override

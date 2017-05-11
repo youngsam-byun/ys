@@ -19,6 +19,8 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ys.app.security.service.CustomUserDetailsService.extractUser;
+
 /**
  * Created by byun.ys on 4/17/2017.
  */
@@ -28,11 +30,11 @@ import java.util.List;
 public class ArticleServiceImpl implements ArticleService {
 
 
-    @Value("${articleService.write.noPermission?:}")
-    private String NO_PERMISSION_TO_WRITE_ARTICLE;// = "articleservice.write.nopermission";
-    @Value("${articleService.update.noPermission?:}")
+    @Value("${articleService.create.noPermission?:articleService.create.noPermission}")
+    private String NO_PERMISSION_TO_WRITE_ARTICLE;// = "articleservice.create.nopermission";
+    @Value("${articleService.update.noPermission?:articleService.update.noPermission}")
     private String NO_PERMISSION_TO_UPDATE_ARTICLE;// = "articleservice.update.nopermission";
-    @Value("${articleService.delete.noPermission?:}")
+    @Value("${articleService.delete.noPermission?:articleService.delete.noPermission?}")
     private String NO_PERMISSION_TO_DELETE_ARTICLE;// = "articleservice.delete.nopermission";
 
 
@@ -60,7 +62,7 @@ public class ArticleServiceImpl implements ArticleService {
             throw new NullPointerException();
 
 
-        if (hasWritePermission(principal, role) == false)
+        if (hasCreatePermission(principal, role) == false)
             throw new AccessDeniedException(NO_PERMISSION_TO_WRITE_ARTICLE);
 
         return articleRepository.create(article) >= 1;
@@ -154,18 +156,16 @@ public class ArticleServiceImpl implements ArticleService {
         return new UtilPagination(pageNo, total, pageSize);
     }
 
-    private boolean hasWritePermission(Principal principal, Role role) {
-        User user = getUser(principal);
+    private boolean hasCreatePermission(Principal principal, Role role) {
+        User user = extractUser(principal);
         int roleId = user.getRoleId();
         return roleId >= role.getId();
     }
 
-    private User getUser(Principal principal) {
-        return ((CustomUserDetails) principal).getUser();
-    }
+    
 
     public boolean hasUpdatePermission(Principal principal, Article article) {
-        User user = getUser(principal);
+        User user = extractUser(principal);
         int roleId = user.getRoleId();
         int id = user.getId();
         int userId = article.getUserId();
@@ -175,7 +175,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     private boolean hasDeletePermission(Principal principal, Integer articleId) {
-        User user = getUser(principal);
+        User user = extractUser(principal);
         int roleId = user.getRoleId();
         int id = user.getId();
 

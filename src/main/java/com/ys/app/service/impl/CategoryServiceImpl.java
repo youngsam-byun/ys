@@ -4,13 +4,11 @@ import com.ys.app.model.Category;
 import com.ys.app.model.Role;
 import com.ys.app.model.User;
 import com.ys.app.repo.CategoryRepository;
-import com.ys.app.security.CustomUserDetails;
 import com.ys.app.service.CategoryService;
 import com.ys.app.util.UtilPagination;
 import com.ys.app.util.UtilValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +17,8 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.ys.app.security.service.CustomUserDetailsService.extractUser;
 
 /**
  * Created by byun.ys on 4/22/2017.
@@ -172,14 +172,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private boolean hasPermission(Principal principal, Role role) {
-        User user = getUser(principal);
+        User user = extractUser(principal);
         int roleId = user.getRoleId();
         return roleId >= role.getId();
     }
-
-
-    private User getUser(Principal principal) {
-        return ((CustomUserDetails) principal).getUser();
-    }
-
+    
 }

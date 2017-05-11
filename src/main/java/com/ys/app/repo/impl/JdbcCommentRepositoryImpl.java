@@ -26,8 +26,8 @@ public class JdbcCommentRepositoryImpl extends BaseRepository<Comment> implement
 
     private static final String COMMENT_LIST = "Comment_LIST";
     private static final String COMMENT_LISTBYSEARCH = "Comment_LISTBYSEARCH";
-    private static final String COMMENT_GET_TOTAL = "Comment_getTotal";
-    private static final String COMMENT_GET_TOTAL_BY_SEARCH = "Comment_getTotalBySearch";
+    private static final String COMMENT_TOTAL = "Comment_TOTAL";
+    private static final String COMMENT_TOTALBYSEARCH = "Comment_TOTALBYSEARCH";
 
     private static final String ID = "id";
     private static final String PAGE_NO = "pageNo";
@@ -75,12 +75,12 @@ public class JdbcCommentRepositoryImpl extends BaseRepository<Comment> implement
 
     @Override
     public int getTotal() {
-        return super.getTotal(COMMENT_GET_TOTAL);
+        return super.getTotal(COMMENT_TOTAL);
     }
 
     @Override
     public int getTotalBySearch(String keyword) {
-        return super.getTotal(COMMENT_GET_TOTAL_BY_SEARCH,new SimpleEntry<>(KEYWORD,keyword));
+        return super.getTotal(COMMENT_TOTALBYSEARCH,new SimpleEntry<>(KEYWORD,keyword));
     }
 
     @Override

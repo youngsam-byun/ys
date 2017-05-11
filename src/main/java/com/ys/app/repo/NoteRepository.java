@@ -10,23 +10,22 @@ import java.util.List;
 
 public interface NoteRepository {
 
-    void setTable(String table);
+    void setTable(int userId);
+
 
     int create(Note note);
 
     Note read(int id);
 
-    int update(Note note);
+    int deleteByUpdateSendDel(int id);
 
-    int delete(int id);
+    int deleteByUpdateRecvDel(int id);
 
     List<Note> getList(int pageNo, int pageSize);
 
     int getTotal();
 
-    int getTotalBySearch(String keyword);
 
-    List<Note> getListBySearch(int pageNo, int pageSize, String keyword);
 
 
 }

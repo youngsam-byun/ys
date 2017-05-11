@@ -19,6 +19,8 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ys.app.security.service.CustomUserDetailsService.extractUser;
+
 /**
  * Created by byun.ys on 4/17/2017.
  */
@@ -28,11 +30,11 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService {
 
 
-    @Value("${commentService.write.noPermission?:}")
+    @Value("${commentService.write.noPermission?:commentService.write.noPermission}")
     private String NO_PERMISSION_TO_WRITE_ARTICLE;// = "commentservice.write.nopermission";
-    @Value("${commentService.update.noPermission?:}")
+    @Value("${commentService.update.noPermission?:commentService.update.noPermission}")
     private String NO_PERMISSION_TO_UPDATE_ARTICLE;// = "commentservice.update.nopermission";
-    @Value("${commentService.delete.noPermission?:}")
+    @Value("${commentService.delete.noPermission?:commentService.delete.noPermission}")
     private String NO_PERMISSION_TO_DELETE_ARTICLE;// = "commentservice.delete.nopermission";
 
 
@@ -60,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
             throw new NullPointerException();
 
 
-        if (hasWritePermission(principal, role) == false)
+        if (hasCreatePermission(principal, role) == false)
             throw new AccessDeniedException(NO_PERMISSION_TO_WRITE_ARTICLE);
 
         return commentRepository.create(comment) >= 1;
@@ -155,18 +157,15 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
-    private boolean hasWritePermission(Principal principal, Role role) {
-        User user = getUser(principal);
+    private boolean hasCreatePermission(Principal principal, Role role) {
+        User user = extractUser(principal);
         int roleId = user.getRoleId();
         return roleId >= role.getId();
     }
 
-    private User getUser(Principal principal) {
-        return ((CustomUserDetails) principal).getUser();
-    }
-
+    
     public boolean hasUpdatePermission(Principal principal, Comment comment) {
-        User user = getUser(principal);
+        User user = extractUser(principal);
         int roleId = user.getRoleId();
         int id = user.getId();
         int userId = comment.getUserId();
@@ -176,7 +175,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private boolean hasDeletePermission(Principal principal, Integer commentId) {
-        User user = getUser(principal);
+        User user = extractUser(principal);
         int roleId = user.getRoleId();
         int id = user.getId();
 

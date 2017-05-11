@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.security.Principal;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -79,6 +80,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         CustomUserDetails customUserDetails=new CustomUserDetails(user,getAuthorities(user));
         Authentication authentication=new UsernamePasswordAuthenticationToken(customUserDetails,user.getPassword(),getAuthorities(user));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
 
+    public  static User extractUser(Principal principal){
+        return ((CustomUserDetails) principal).getUser();
     }
 }

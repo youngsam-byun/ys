@@ -53,22 +53,22 @@ public class CategoryController {
 
 
     @Value("${categoryController.read.empty?:categoryController.read.empty}")
-    private String CATEGORYCONTROLLER_READ_EMPTY = "categoryController.read.empty";
+    private String CATEGORYCONTROLLER_READ_EMPTY;
 
     @Value("${categoryController.delete.fail?:categoryController.delete.fail}")
-    private String  CATEGORYCONTROLLER_DELETE_FAIL= "categoryController.delete.fail";
+    private String  CATEGORYCONTROLLER_DELETE_FAIL;
 
     @Value("${categoryController.create.fail?:categoryController.create.fail}")
-    private String CATEGORYCONTROLLER_WRITE_FAIL ="categoryController.write.fail" ;
+    private String CATEGORYCONTROLLER_WRITE_FAIL;
 
     @Value("${categoryController.update.fail?:categoryController.update.fail}")
-    private String UPDATE_CATEGORY_FAILED = "Update category failed";
+    private String UPDATE_CATEGORY_FAILED;
 
     @Value("${categoryController.id.notNegative?:categoryController.id.notNegative}")
-    private String ID_SHOULD_NOT_BE_NEGATIVE_VALUE = "categoryController.id.notNegative";
+    private String ID_SHOULD_NOT_BE_NEGATIVE_VALUE;
 
     @Value("${categoryController.keyword.notEmpty?:categoryController.keyword.notEmpty}")
-    private String SEARCH_KEYWORD_SHOULD_NOT_BE_EMPTY="categoryController.keyword.notEmpty";
+    private String SEARCH_KEYWORD_SHOULD_NOT_BE_EMPTY;
 
 
     @Value("${categoryController.pageNo.notNegative?:categoryController.pageNo.notNegative}")

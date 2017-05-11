@@ -2,29 +2,28 @@ package com.ys.app.model;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 public class Note {
 
   private int id;
-  private int senderId;
-  private int receiverId;
+  private int sendId;
+  private int recvId;
 
   @NotEmpty
   private String msg;
   private Date sendTime;
-  private Date receiveTime;
+  private Date recvTime;
   private boolean read;
   private boolean sendDel;
-  private boolean receiveDel;
+  private boolean recvDel;
 
 
   public Note(){
     sendTime=new Date();
     read=false;
     sendDel=false;
-    receiveDel=false;
+    recvDel =false;
   }
 
   public int getId() {
@@ -35,20 +34,20 @@ public class Note {
     this.id = id;
   }
 
-  public int getSenderId() {
-    return senderId;
+  public int getSendId() {
+    return sendId;
   }
 
-  public void setSenderId(int senderId) {
-    this.senderId = senderId;
+  public void setSendId(int sendId) {
+    this.sendId = sendId;
   }
 
-  public int getReceiverId() {
-    return receiverId;
+  public int getRecvId() {
+    return recvId;
   }
 
-  public void setReceiverId(int receiverId) {
-    this.receiverId = receiverId;
+  public void setRecvId(int recvId) {
+    this.recvId = recvId;
   }
 
   public String getMsg() {
@@ -63,16 +62,16 @@ public class Note {
     return sendTime;
   }
 
-  public void setSendTime(Timestamp sendTime) {
+  public void setSendTime(Date sendTime) {
     this.sendTime = sendTime;
   }
 
-  public Date getReceiveTime() {
-    return receiveTime;
+  public Date getRecvTime() {
+    return recvTime;
   }
 
-  public void setReceiveTime(Timestamp receiveTime) {
-    this.receiveTime = receiveTime;
+  public void setRecvTime(Date recvTime) {
+    this.recvTime = recvTime;
   }
 
   public boolean isRead() {
@@ -91,11 +90,11 @@ public class Note {
     this.sendDel = sendDel;
   }
 
-  public boolean isReceiveDel() {
-    return receiveDel;
+  public boolean isRecvDel() {
+    return recvDel;
   }
 
-  public void setReceiveDel(boolean receiveDel) {
-    this.receiveDel = receiveDel;
+  public void setRecvDel(boolean recvDel) {
+    this.recvDel = recvDel;
   }
 }

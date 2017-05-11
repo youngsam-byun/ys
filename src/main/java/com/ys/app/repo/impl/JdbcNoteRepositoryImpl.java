@@ -1,5 +1,6 @@
 package com.ys.app.repo.impl;
 
+import com.mysql.jdbc.exceptions.MySQLSyntaxErrorException;
 import com.ys.app.model.Note;
 import com.ys.app.model.mapper.NoteRowMapper;
 import com.ys.app.repo.NoteRepository;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,78 +19,103 @@ import java.util.List;
 @Repository
 public class JdbcNoteRepositoryImpl extends BaseRepository<Note> implements NoteRepository {
 
-    public static final String PREFIX = "=N_";
+    public static final String PREFIX = "N_";
 
-    private static final String TABLE_NAME = "Note";
+
     private static final String NOTE_INS = "Note_INS";
     private static final String NOTE_READ = "Note_READ";
-    private static final String NOTE_UPD = "Note_UPD";
 
-    private static final String G_GET_LIST = "G_getList";
-    private static final String G_GET_TOTAL = "Note_getTotal";
-    private static final String G_GET_LIST_BY_SEARCH = "G_getListBySearch";
-    private static final String G_GET_TOTAL_BY_SEARCH = "G_getTotalBySearch";
+    private static final String NOTE_LIST = "Note_LIST";
+    private static final String NOTE_TOTAL = "Note_TOTAL";
 
-    private static final String KEYWORD="keyword";
     private static final String PAGE_NO = "pageNo";
     private static final String PAGE_SIZE = "pageSize";
-    private static final String ID = "id";
 
+    private static final int SIZE = 10000;
+    private static final String NOTE_DELETE_BY_RECV_DEL = "Note_deleteByRecvDel";
+    private static final String NOTE_DELETE_BY_SEND_DEL = "Note_deleteBySendDel";
+    private static final String USER_ID = "userId";
+    private static final String RECV_TIME = "recvTime";
+    private static final String ID = "id";
+    private static final String TABLE = "table";
+    private static final String NOTE_CREATE_TBL = "Note_Create_TBL";
+
+    private static String TABLE_NO;
+    private int userId;
 
     @Autowired
     public JdbcNoteRepositoryImpl(DataSource dataSource) {
-        this.dataSource=dataSource;
+        this.dataSource = dataSource;
         this.baseRowMapper = new NoteRowMapper();
-        this.setTable(PREFIX+TABLE_NAME);
+
     }
 
     @Override
-    public void setTable(String table) {
-        super.setTable(table);
+    public void setTable(int userId) {
+        setTableFromUserId(userId);
+    }
+
+    private  void setTableFromUserId(int userId){
+        this.userId = userId;
+
+        int no = userId / SIZE;
+        no++;
+        TABLE_NO = String.valueOf(no);
+        super.setTable(PREFIX+TABLE_NO);
     }
 
     @Override
     public int create(Note note) {
-        return super.create(NOTE_INS, note);
+
+        int r=-1;
+        try {
+            r=super.create(NOTE_INS, note);
+        } catch (Exception e) {
+            String msg = e.getMessage();
+            if (msg.contains("doesn't exist")) {
+                setTableFromUserId(userId);
+                createTable(table);
+
+            }else
+                return  -1;
+
+        } finally {
+            if(r==-1)
+                return super.create(NOTE_INS, note);
+            else
+                return  r;
+        }
+    }
+
+    private void createTable(String table) {
+        super.executeSimple(NOTE_CREATE_TBL,new SimpleEntry<>(TABLE,table));
     }
 
     @Override
     public Note read(int id) {
-        return super.executeStoredProcedure(NOTE_READ, new SimpleEntry<>(ID, id));
+        return super.executeStoredProcedure(NOTE_READ, new SimpleEntry<>(ID, id), new SimpleEntry<>(RECV_TIME, new Date()));
     }
 
     @Override
-    public int update(Note note) {
-        return super.update(NOTE_UPD, note);
+    public int deleteByUpdateSendDel(int id) {
+        return super.executeStoredProcedureForObject(NOTE_DELETE_BY_SEND_DEL, new SimpleEntry<>(ID, id));
     }
 
     @Override
-    public int delete(int id) {
-        return super.deleteByUpdateId(id);
+    public int deleteByUpdateRecvDel(int id) {
+        return super.executeStoredProcedureForObject(NOTE_DELETE_BY_RECV_DEL, new SimpleEntry<>(ID, id));
     }
 
+
     @Override
-    public List<Note> getList(int pageNo,int pageSize) {
-        return super.getList(G_GET_LIST, new SimpleEntry<>(PAGE_NO, pageNo),new SimpleEntry<>(PAGE_SIZE, pageSize));
+    public List<Note> getList(int pageNo, int pageSize) {
+        return super.getList(NOTE_LIST, new SimpleEntry<>(PAGE_NO, pageNo), new SimpleEntry<>(PAGE_SIZE, pageSize), new SimpleEntry<>(USER_ID, userId));
     }
 
 
     @Override
     public int getTotal() {
-        return super.getTotal(G_GET_TOTAL);
+        return super.getTotal(NOTE_TOTAL, new SimpleEntry<>(USER_ID, userId));
     }
-
-    @Override
-    public int getTotalBySearch(String keyword) {
-        return super.getTotal(G_GET_TOTAL_BY_SEARCH,new SimpleEntry<>(KEYWORD,keyword));
-    }
-
-    @Override
-    public List<Note> getListBySearch(int pageNo, int pageSize, String keyword) {
-        return super.getList(G_GET_LIST_BY_SEARCH, new SimpleEntry<>(PAGE_NO, pageNo),
-                new SimpleEntry<>(PAGE_SIZE, pageSize),
-                new SimpleEntry<>(KEYWORD, keyword));
-    }
-
 
 }
