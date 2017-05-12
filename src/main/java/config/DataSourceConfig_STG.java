@@ -23,22 +23,22 @@ import javax.sql.DataSource;
 public class DataSourceConfig_STG {
 
     @Value("${jdbc.driverClassName}")
-    private String driverClassName;
+    private static String driverClassName;
 
     @Value("${jdbc.url}")
-    private String url;
+    private static String url;
 
     @Value("${jdbc.username}")
-    private String username;
+    private static String username;
 
     @Value("${jdbc.password}")
-    private String password;
+    private static String password;
 
     @Value("${jdbc.initialSize}")
-    private int intialSize;
+    private static int intialSize;
 
     @Value("${jdbc.maxTotal}")
-    private int maxTotal;
+    private static int maxTotal;
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourceConfig() {
@@ -46,7 +46,7 @@ public class DataSourceConfig_STG {
     }
 
     @Bean
-    public DataSource dataSource() {
+    public static DataSource dataSource() {
 
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName(driverClassName);

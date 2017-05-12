@@ -4,6 +4,7 @@ import com.ys.app.exception.CustomException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -13,10 +14,10 @@ import java.io.StringWriter;
 /**
  * Created by byun.ys on 4/19/2017.
  */
-@Controller
+@ControllerAdvice
 public class CustomExceptionController {
 
-    private static final String NEWLINE = "\r\n";
+    private static final String NEWLINE = "\n";
     private static final String FOLDER = "/error";
     private static final String CUTOM_ERROR_JSP = "/cutomError.jsp";
     private static Logger logger = LoggerFactory.getLogger(CustomExceptionController.class);

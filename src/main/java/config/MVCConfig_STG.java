@@ -28,7 +28,7 @@ import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "com.ys.web" })
-@EnableAspectJAutoProxy
+//@EnableAspectJAutoProxy
 public class MVCConfig_STG extends WebMvcConfigurerAdapter {
 
 	private static final int MAX_UPLOAD_SIZE = 5242880;
