@@ -353,3 +353,31 @@ class ElevatorControllerTest {
         assertEquals(Elevator.DoorState.OPEN, e0.getDoorState());
     }
 }
+
+
+
+@Serializable
+data class MessageEnvelope(
+    val producerKey: String? = null,       // Unique producer identifier
+    val batchId: String? = null,           // Unique batch or group ID
+    val functionalCut: String? = null,     // Logical partition, e.g. DAILY_CUT
+    val processingType: ProcessingType = ProcessingType.OTHER, // DELTA, SNAPSHOT, or OTHER
+    val topicName: String? = null,         // Optional: Kafka topic name
+    val action: ActionType = ActionType.PROVISION,             // PROVISION or TRIGGER
+    val jobName: String? = null,           // Job or process name
+    val payload: String? = null,           // JSON or serialized payload
+    val timestamp: Long = Instant.now().toEpochMilli() // Creation time
+)
+
+@Serializable
+enum class ProcessingType {
+    DELTA,
+    SNAPSHOT,
+    OTHER
+}
+
+@Serializable
+enum class ActionType {
+    PROVISION,
+    TRIGGER
+}
